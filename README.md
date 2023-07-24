@@ -106,7 +106,7 @@
     let upgboughttimes = 0;
     let upgcostmult = new Decimal(1.15);
     let upgpricepow = new Decimal(1);
-    let star = new Decimal(0); // New variable for star using Decimal.js
+    let star = new Decimal(1); // New variable for star using Decimal.js
 
     function formatNumber(num) {
       if (num.gte(100)) {
