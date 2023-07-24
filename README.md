@@ -190,7 +190,9 @@
     function resetGame() {
       if (Goal1.eq(1) && Goal2.eq(1) && Goal3.eq(1)) {
         star = star.plus(1); // Increase the value of "star" using Decimal.js
-        X = new Decimal(0); // Reset X to 0
+        X = new Decimal(1); // Reset X to 0
+        Y = new Decimal(1);
+        Z = new Decimal(1);
         Goal1 = new Decimal(0);
         Goal2 = new Decimal(0);
         Goal3 = new Decimal(0);
