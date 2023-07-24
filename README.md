@@ -1,28 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Space Incremental</title>
+  <title>Space Odyssey - An Incremental Game</title>
   <style>
-     body {
-      font-family: 'Arial', sans-serif;
-      background-color: #0b182d;
-      color: #ffffff;
-      text-align: center;
-      margin: 20px;
-    }
-
-    h1 {
-      color: #ffcc00;
-    }
-
-    p {
-      margin-bottom: 5px;
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
     }
 
     .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     }
 
     .progress-bar {
@@ -39,41 +31,49 @@
       background-color: #4caf50;
     }
 
-    .btn {
-      background-color: #ffcc00;
-      color: #000000;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
+    h1 {
+      text-align: center;
     }
 
-    .btn:hover {
-      background-color: #ffdb4d;
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    p {
+      margin: 5px 0;
     }
 
     .how-to-play {
-      background-color: #1b2e4c;
-      padding: 20px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      padding: 10px;
       border-radius: 5px;
-      margin-top: 20px;
-      text-align: left;
-    }
-
-    .how-to-play h2 {
-      color: #ffcc00;
-      margin-top: 0;
-      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Space Incremental</h1>
-    <p>Value of Spaceship X: <span id="xValue">1</span></p>
-    <p>Value of Stardust Y: <span id="yValue">0</span></p>
-    <p>Value of Warp Drive Z: <span id="zValue">1</span></p>
+    <h1>Space Odyssey - An Incremental Game</h1>
+    <div class="how-to-play">
+      <h2>How to Play</h2>
+      <p>Welcome to Space Odyssey! Your goal is to explore the vast cosmos and reach new frontiers.</p>
+      <p><strong>Value of X:</strong> Represents your current spacecraft technology level.</p>
+      <p><strong>Value of Y:</strong> Indicates the amount of interstellar resources gathered.</p>
+      <p><strong>Value of Z:</strong> Shows the space exploration milestone achieved.</p>
+      <p><strong>Goals:</strong> Reach the following milestones:</p>
+      <ol>
+        <li>Goal 1: Reach the interstellar speed of light (Z &gt;= 8).</li>
+        <li>Goal 2: Gather 100 interstellar resources (Y &gt;= 100).</li>
+        <li>Goal 3: Reach a technology level of 1 million (X &gt;= 1e6).</li>
+      </ol>
+      <p><strong>Stars:</strong> Your cosmic achievements are marked with stars. Each time you reset the game with all goals reached, you earn a star.</p>
+      <p>Click the buttons to buy upgrades and gather resources. Can you conquer the vastness of space?</p>
+    </div>
+    <p>Value of X: <span id="xValue">1</span></p>
+    <p>Value of Y: <span id="yValue">0</span></p>
+    <p>Value of Z: <span id="zValue">1</span></p>
+    <p>Stars: <span id="starValue">0</span></p> <!-- Display the amount of stars -->
     <p>Goal 1: <span id="goal1">Not Reached</span></p>
     <div class="progress-bar">
       <div class="progress-fill" id="goal1Progress" style="width: 0;"></div>
@@ -86,24 +86,11 @@
     <div class="progress-bar">
       <div class="progress-fill" id="goal3Progress" style="width: 0;"></div>
     </div>
-    <button class="btn" onclick="buyUpgrade()">Acquire Tech (Cost: <span id="upgradeCost">1</span> Spaceship X)</button>
+    <button onclick="buyUpgrade()">Buy Spacecraft Upgrade (Cost: <span id="upgradeCost">1</span> X)</button>
     <br>
-    <button class="btn" onclick="resetValues()">Initiate Hyperdrive (Cost: <span id="resetCost">40</span> Stardust Y)</button>
-
-    <div class="how-to-play">
-      <h2>How to Play</h2>
-      <p>Welcome to Space Incremental! Your mission is to explore the vast universe and gather resources to upgrade your spaceship and warp drive technology.</p>
-      <p><strong>Spaceship X:</strong> Represents the current value of your spaceship. It increases over time based on the power of your warp drive and stardust.</p>
-      <p><strong>Stardust Y:</strong> Stardust is the cosmic currency you'll collect during your journey. You can use stardust to acquire advanced technologies and strengthen your spaceship.</p>
-      <p><strong>Warp Drive Z:</strong> The warp drive multiplies the power of your stardust to speed up the growth of your spaceship.</p>
-      <p><strong>Goals:</strong> Reach the following milestones to achieve your objectives:</p>
-      <ul>
-        <li><strong>Goal 1:</strong> Reach 8 Warp Drive Z. Reward: Reduce upgrade price multiplier</li>
-        <li><strong>Goal 2:</strong> Collect 100 Stardust Y. Reward: Incrase the strength of Y *2</li>
-        <li><strong>Goal 3:</strong> Boost Spaceship X to 1 million. Reward Reduce the upgrade price multiplier</li>
-      </ul>
-      <p>Remember, once you've reached a goal, it remains achieved even after a reset. Keep upgrading and exploring to uncover the secrets of the cosmos!</p>
-    </div>
+    <button onclick="resetValues()">Explore a New Galaxy (Cost: <span id="resetCost">40</span> Y)</button>
+    <br>
+    <button onclick="resetGame()">Warp to a New Dimension (Requires all goals to be reached)</button>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.3.1/decimal.min.js"></script>
@@ -119,6 +106,7 @@
     let upgboughttimes = 0;
     let upgcostmult = new Decimal(1.15);
     let upgpricepow = new Decimal(1);
+    let star = new Decimal(0); // New variable for star using Decimal.js
 
     function formatNumber(num) {
       if (num.gte(100)) {
@@ -138,6 +126,7 @@
       document.getElementById("goal1").textContent = Goal1.eq(1) ? "Reached" : "Not Reached";
       document.getElementById("goal2").textContent = Goal2.eq(1) ? "Reached" : "Not Reached";
       document.getElementById("goal3").textContent = Goal3.eq(1) ? "Reached" : "Not Reached";
+      document.getElementById("starValue").textContent = formatNumber(star); // Display the amount of stars
 
       // Update progress bars
       document.getElementById("goal1Progress").style.width = Goal1.eq(1) ? "100%" : (Z.div(8).times(100)).toFixed(2) + "%";
@@ -157,7 +146,7 @@
 
     function updateValues() {
       let yMultiplier = Goal2.eq(1) ? 2 : 1;
-      X = X.plus(Y.times(yMultiplier).dividedBy(100).times(Z));
+      X = X.plus(Y.times(yMultiplier).dividedBy(100).times(Z)).pow(star.sqrt()); // Exponentiate X based on the square root of star
       checkGoals();
       updateDisplay();
     }
@@ -194,7 +183,17 @@
         upgboughttimes = 0;
         upgcostmult = new Decimal(1.15);
         upgpricepow = new Decimal(1);
+        updateDisplay();
+      }
+    }
 
+    function resetGame() {
+      if (Goal1.eq(1) && Goal2.eq(1) && Goal3.eq(1)) {
+        star = star.plus(1); // Increase the value of "star" using Decimal.js
+        X = new Decimal(0); // Reset X to 0
+        Goal1 = new Decimal(0);
+        Goal2 = new Decimal(0);
+        Goal3 = new Decimal(0);
         updateDisplay();
       }
     }
