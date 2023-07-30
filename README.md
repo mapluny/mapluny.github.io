@@ -101,6 +101,10 @@
         <button onclick="buyUpgrade4()">Buy star power upgrade (Cost: <span id="upgradeCost4">1</span> Star)</button>
         <p>Improve star power growth based on highest X reached without Z resetting</p>
         <p>Highest: <span id="hxwoz">1</span></p>
+        <button onclick="buyUpgrade5()">Buy star power upgrade (Cost: <span id="upgradeCost5">1</span> Star)</button>
+        <p>Improve Z factor in star gain</p>
+        <button onclick="buyUpgrade6()">Buy star power upgrade (Cost: <span id="upgradeCost6">1</span> Star)</button>
+        <p>Star power grows faster if you have not Z reset in this current full reset.</p>
       </div>
     </div>
 
@@ -169,7 +173,7 @@
       let upgboughttimes = 0;
       let upgcostmult = new Decimal(1.15);
       let upgpricepow = new Decimal(1);
-      let star = new Decimal(1); // New variable for star using Decimal.js
+      let star = new Decimal("1"); // New variable for star using Decimal.js
       let reset1times = new Decimal(0);
       let lastX = new Decimal(1);
 
@@ -205,6 +209,17 @@
       let spupgrademult2 = new Decimal("1e10");
       let spupgboughttimes2 = 0;
 
+      let spupgradecost3 = new Decimal("1e12");
+      let spupgrademult3 = new Decimal("1.5e3");
+      let spupgboughttimes3 = 0;
+
+      let spupgradecost4 = new Decimal("1e13");
+      let spupgrademult4 = new Decimal("1e22");
+      let spupgboughttimes4 = 0;
+
+
+
+
 
       function formatNumber(num) {
         if (num.gte(1000)) {
@@ -223,6 +238,8 @@
         document.getElementById("upgradeCost2").textContent = formatNumber(stariteupgradecost);
         document.getElementById("upgradeCost3").textContent = formatNumber(spupgradecost);
         document.getElementById("upgradeCost4").textContent = formatNumber(spupgradecost2);
+        document.getElementById("upgradeCost5").textContent = formatNumber(spupgradecost3);
+        document.getElementById("upgradeCost6").textContent = formatNumber(spupgradecost4);
         document.getElementById("resetCost").textContent = formatNumber(resetCost);
         document.getElementById("goal1").textContent = Goal1.eq(1) ? "Reached" : "Not Reached";
         document.getElementById("goal2").textContent = Goal2.eq(1) ? "Reached" : "Not Reached";
@@ -274,6 +291,24 @@
           star = star.minus(spupgradecost2);;
           spupgboughttimes2++;
           updateUpgradeCost4();
+          updateDisplay();
+        }
+      }
+
+      function buyUpgrade5() {
+        if (star.gte(spupgradecost3)) {
+          star = star.minus(spupgradecost3);;
+          spupgboughttimes3++;
+          updateUpgradeCost5();
+          updateDisplay();
+        }
+      }
+
+      function buyUpgrade6() {
+        if (star.gte(spupgradecost4)) {
+          star = star.minus(spupgradecost4);;
+          spupgboughttimes4++;
+          updateUpgradeCost6();
           updateDisplay();
         }
       }
@@ -338,8 +373,9 @@
         let yMultiplier = Goal2.eq(1) ? 2 : 1;
         let starEffectiveness = star.pow(new Decimal(1).dividedBy(X.plus(1).sqrt().sqrt()));
         let sp = starpower.pow(5);
-        let staritegp = new Decimal(2);
+        let staritegp = new Decimal(2).pow(starites).minus(1);
         let Xmul = new Decimal(1);
+        let szfactor = Z;
         Ystrength = Y.plus(1);
         starEffectiveness = starEffectiveness.mul(sp)
 
@@ -378,24 +414,38 @@
         }
 
         if (spupgboughttimes2 >= 1) {
-          staritegp = staritegp.plus(Decimal.log10(hxwoz));
+          let dv = new Decimal(spupgboughttimes2)
+          staritegp = staritegp.plus(Decimal.log10(hxwoz.pow(1.5)).pow(dv));
+        }
+
+        if (spupgboughttimes3 >= 1) {
+          let dv = new Decimal(spupgboughttimes3)
+          szfactor = szfactor.pow(dv.mul(0.4).plus(1))
+        }
+
+        if (spupgboughttimes4 >= 1) {
+          let dv = new Decimal(spupgboughttimes4)
+					if (zresetpurchasedthisfullreset == 0){
+					staritegp = staritegp.pow(dv.plus(1))
+					}
+          
         }
 
         starsgained = new Decimal(0.5);
         Ystrength = Ystrength.mul(sp);
-        Ystrength = Ystrength.plus(new Decimal(1.25).pow(Z).minus(1.250));
+        Ystrength = Ystrength.plus(Decimal.min((new Decimal(3).pow(Z).minus(3)), 5000));
         newX = Xmul.mul(Ystrength.times(yMultiplier).times(Z.mul(sp)).times(starEffectiveness));
         lastX = newX;
         ymult = Ystrength.minus(Y);
         X = X.plus(newX.dividedBy(100));
-        newstarpower = new Decimal(2.5).pow(starites.mul(Decimal.log10(staritegp))).minus(1).dividedBy(Decimal.log10(starpower.plus(1)).pow(2));
+        newstarpower = staritegp;
         starpower = starpower.plus(newstarpower.div(100))
 
         if (starUpgrade10Bought) {
-          starsgained = starsgained.plus(new Decimal(10).pow(Decimal.log10(X.pow(0.05).mul(Y.pow(0.002).mul(Z.pow(0.01))))))
+          starsgained = starsgained.plus(new Decimal(10).pow(Decimal.log10(X.pow(0.05).mul(Y.pow(0.002).mul(szfactor)))))
 
         }
-        starsgained = starsgained.times(new Decimal(2).pow(rstarubt).plus(1));
+        starsgained = starsgained.times(new Decimal(2).pow(rstarubt.plus(1)));
 
 
         checkGoals();
@@ -404,6 +454,7 @@
 
       function updateUpgradeCost() {
         upgpricepow = new Decimal(1); // Reset upgpricepow to 1
+        upgpricerealpow = new Decimal(1);
         if (Goal3.eq(1)) {
           upgpricepow = upgpricepow.dividedBy(1.25);
         }
@@ -411,11 +462,26 @@
           upgpricepow = upgpricepow.dividedBy(1.25);
         }
 
-        if (spupgboughttimes > 1) {
-          upgpricepow = upgpricepow.dividedBy(starpower);
+
+
+        if (upgboughttimes > 5000) {
+          let dc = new Decimal(upgboughttimes - 499)
+          let dv = dc;
+          upgpricerealpow = Decimal.max(dv, 1);
+
+
         }
 
-        upgradeCost = upgcostmult.pow(upgboughttimes).times(upgpricepow);
+        if (spupgboughttimes > 0) {
+          let dv = new Decimal(spupgboughttimes);
+          upgpricepow = upgpricepow.div(starpower.mul(dv.pow(2)));
+        }
+
+        upgradeCost = upgcostmult.pow(upgboughttimes).times(upgpricepow).pow(upgpricerealpow);
+
+
+
+
       }
 
       function updateUpgradeCost2() {
@@ -434,6 +500,34 @@
         upgpricepow = new Decimal(1.5); // Reset upgpricepow to 1
         spupgradecost2 = new Decimal("1e10");
         spupgradecost2 = spupgradecost2.mul(spupgrademult2.pow(spupgboughttimes2).pow(upgpricepow));
+				if (spupgradecost2.gte("1e90")) {
+
+				spupgradecost2 = spupgradecost2.pow(5);
+
+				}
+      }
+
+      function updateUpgradeCost5() {
+        upgpricepow = new Decimal(1); // Reset upgpricepow to 1
+        spupgradecost3 = new Decimal("1e12");
+        spupgradecost3 = spupgradecost3.mul(spupgrademult3.pow(spupgboughttimes3).pow(upgpricepow));
+				if (spupgradecost3.gte("1e70")) {
+
+				spupgradecost3 = spupgradecost3.pow(4);
+
+				}
+      }
+
+      function updateUpgradeCost6() {
+        upgpricepow = new Decimal(1.03); // Reset upgpricepow to 1
+        spupgradecost4 = new Decimal("1e13");
+        spupgradecost4 = spupgradecost4.mul(spupgrademult4.pow(spupgboughttimes4).pow(upgpricepow));
+				if (spupgradecost4.gte("1e80")) {
+
+				spupgradecost4 = spupgradecost4.pow(10);
+
+				}
+
       }
 
       function checkGoals() {
@@ -452,7 +546,6 @@
         if (Y.gte(resetCost)) {
           X = new Decimal(1);
           Y = new Decimal(0);
-          resetCost = resetCost.plus(10);
           Z = Z.times(2);
           upgboughttimes = 0;
           upgcostmult = new Decimal(1.15);
@@ -496,8 +589,36 @@
       }
 
 
+      function buymax2() {
+        let i = 0;
+        while (i < 512) {
+          buyUpgrade2();
+          i++;
+        }
+      }
+
+
 
       function autobuyer() {
+        const tv = document.getElementById('username').value;
+				whenreset = new Decimal(0);
+        if (tv) {
+          try {
+					whenreset = new Decimal(tv);
+					} catch (error) {
+
+
+				
+				}
+
+          if (whenreset instanceof Decimal) {
+					
+          } else {
+					whenreset = new Decimal(0);
+          }
+
+        }
+
 
         updateUpgradeCost();
 
@@ -507,7 +628,7 @@
         if (starUpgrade6Bought && autobuyers[1] == 1) {
           resetValues()
         }
-        if (starUpgrade7Bought && autobuyers[2] == 1) {
+        if (starUpgrade7Bought && autobuyers[2] && starsgained.gte(whenreset) == 1) {
           resetGame()
         }
 
@@ -522,6 +643,8 @@
         }
 
       }
+
+
 
       setInterval(updateValues, 10);
       setInterval(updateUpgradeCost, 1);
