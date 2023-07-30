@@ -465,7 +465,7 @@
 
 
         if (upgboughttimes > 5000) {
-          let dc = new Decimal(upgboughttimes - 499)
+          let dc = new Decimal(upgboughttimes - 4999)
           let dv = dc;
           upgpricerealpow = Decimal.max(dv, 1);
 
@@ -491,7 +491,7 @@
       }
 
       function updateUpgradeCost3() {
-        upgpricepow = new Decimal(1.01); // Reset upgpricepow to 1
+        upgpricepow = new Decimal(1.02); // Reset upgpricepow to 1
         spupgradecost = new Decimal("1e6");
         spupgradecost = spupgradecost.mul(spupgrademult.pow(spupgboughttimes).times(upgpricepow));
       }
