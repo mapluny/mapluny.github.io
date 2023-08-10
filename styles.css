@@ -1,0 +1,168 @@
+/* Default styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Common styles for tabs and tab contents */
+.tabs-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.tabs {
+  list-style: none;
+  padding: 0;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  background-color: #f1f1f1;
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+.tab {
+  display: inline-block;
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  background-color: #f1f1f1;
+}
+
+.tab.active {
+  background-color: white;
+  border-bottom: 1px solid white;
+}
+
+.tab-content {
+  display: none;
+  padding: 20px;
+  border: 1px solid gray;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Styles for specific tab themes */
+#carbon-content {
+  background-color: #f8f8f8;
+  border-color: #ddd;
+}
+
+#boost-content {
+  background-color: #f0e68c;
+  border-color: #e6db55;
+}
+
+#proton-content {
+  background-color: #dda0dd;
+  border-color: #b682b5;
+}
+
+#quark-content {
+  background-color: #87ceeb;
+  border-color: #6a9aad;
+}
+
+/* Other styles */
+.container {
+  text-align: center;
+}
+
+.container2 {
+  text-align: center;
+  color: #333;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: #ccc;
+}
+
+.box {
+  border: 3px solid #564e5c;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #ecdbff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* modalLibrary.css */
+
+/* Style for the modal container */
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Style for the modal overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+
+/* Style for the modal content */
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+/* Style for the close button */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+#notificationContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
+.notification {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  opacity: 1;
+  transition: opacity 0.5s;
+}

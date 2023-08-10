@@ -1,0 +1,25 @@
+COOL EFFECTS
+--CARBON EFFECTS--
+Carbon1 - You get X free CGs
+
+Carbon2 - You get X more CGs on buying CGs
+
+Carbon3 - CGs are X more effective
+--PS EFFECTS--
+Producion1 - Production speed multiplier: *X
+
+Production2 - Proton limit is X% higher based on X
+
+Production3 - Production Speed Price Mult ^X
+--BOOST EFFECTS--
+Boost1 - The boost gain multiplier is improved by ^X
+
+Boost2 - Boost is *X stronger.
+
+Boost3 - You gain X% of the CGs you would gain by boosting every second
+--PROTON EFFECTS--
+Proton1 - you gain *X more protons.
+
+Proton2 - Production Reduction goes by *X faster.
+
+Proton3 - Proton cap *X
