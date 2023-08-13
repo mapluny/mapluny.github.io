@@ -70,6 +70,7 @@ let save = {
 function loadSave(savedData) {
 	if(saveData.carbon == null){
 			resetsaves();
+			return;
 		}
 		
     carbon = new Decimal(savedData.carbon);
