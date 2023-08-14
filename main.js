@@ -62,9 +62,9 @@ function formatnum(number) {
 
 // Get DOM elements
 const pointsDisplay = document.getElementById("ca");
-const cgs = document.getElementById("cgs");
+const cgs = document.getElementById("buycg");
 const cgcostd = document.getElementById("cgcost");
-const pdd = document.getElementById("cps");
+const pdd = document.getElementById("buyps");
 const pdcostd = document.getElementById("pdcost");
 const boostd = document.getElementById("boost");
 const protonsd = document.getElementById("protons");
