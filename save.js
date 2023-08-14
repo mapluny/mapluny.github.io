@@ -68,11 +68,6 @@ let save = {
   
 };
 function loadSave(savedData) {
-	if(saveData.carbon == null){
-			resetsaves();
-			return;
-		}
-		
     carbon = new Decimal(savedData.carbon);
     highestcarbonthisreset = new Decimal(savedData.highestcarbonthisreset);
     productionreduction = new Decimal(savedData.productionreduction);
