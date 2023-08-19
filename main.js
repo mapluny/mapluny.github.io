@@ -872,7 +872,7 @@ function generateUniqueRandomNumbers(min, max, count) {
   return result;
 }
 
-loadlssave();
+setTimeout(loadlssave, 5);
 updateInstancesDisplay();
 
 function resetsave() {
