@@ -1,6 +1,7 @@
 /* Default styles */
 body {
-  font-family: Arial, sans-serif;
+  background-color: #1d1d1d;
+  font-family: monospace, sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -17,40 +18,50 @@ body {
   display: inline-block;
   margin: 0;
   padding: 0;
-  background-color: #f1f1f1;
-  border-top: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
+  background-color: #1d1d1d;
+  border-top: 1px solid #1d1d1d;
+  border-left: 1px solid #3b3b3b;
+  border-right: 1px solid #4d4d4d;
 }
 
 .tab {
   display: inline-block;
   padding: 10px 20px;
   cursor: pointer;
-  border: 1px solid #ccc;
+  border: 1px solid #272727;
   border-bottom: none;
-  background-color: #f1f1f1;
+  background-color: #383838;
 }
 
 .tab.active {
-  background-color: white;
-  border-bottom: 1px solid white;
+  background-color: rgb(41, 41, 41);
+  border-bottom: 1px solid rgb(85, 85, 85);
 }
 
 .tab-content {
   display: none;
   padding: 20px;
-  border: 1px solid gray;
+  border: 1px solid rgb(41, 41, 41);
 }
 
 .tab-content.active {
   display: block;
 }
 
+.button-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+
 /* Styles for specific tab themes */
 #carbon-content {
-  background-color: #f8f8f8;
-  border-color: #ddd;
+  background-color: #747474;
+  border-color: #272727;
 }
 
 #boost-content {
@@ -59,13 +70,18 @@ body {
 }
 
 #proton-content {
-  background-color: #dda0dd;
-  border-color: #b682b5;
+  background-color: #db83db;
+  border-color: #a359a2;
 }
 
 #quark-content {
-  background-color: #87ceeb;
-  border-color: #6a9aad;
+  background-color: #8789eb;
+  border-color: #6a74ad;
+}
+
+#ab-content {
+  background-color: #ce5221;
+  border-color: #91472a;
 }
 
 /* Other styles */
@@ -85,6 +101,17 @@ button {
   padding: 10px 20px;
   cursor: pointer;
   margin-top: 10px;
+}
+
+.protonm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.protonm button {
+  margin-top: 5%;
+  align-items: center;
 }
 
 button:hover {
@@ -166,3 +193,4 @@ button:disabled:hover {
   opacity: 1;
   transition: opacity 0.5s;
 }
+

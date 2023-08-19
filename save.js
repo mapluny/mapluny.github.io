@@ -2,6 +2,10 @@ let save = {
   carbon: new Decimal(10),
   highestcarbonthisreset: new Decimal(10),
   productionreduction: new Decimal(1),
+  totalcarbonthisreset: new Decimal(0),
+  progression: 0,
+  time: Date.now(),
+  TimeSinceQuarkReset: 0,
 
   // Carbon Generators
   carbonGenerators: {
@@ -25,12 +29,14 @@ let save = {
     boost: new Decimal("1"),
     boostgainedonreset: new Decimal(0),
     boostupgrades: [
-      [0, "3"],
-      [0, "10"],
-      [0, "1e3"],
-      [0, "2.4e3"],
-      [0, "1e4"],
-      [0, "1e5"],
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
     ],
   },
 
@@ -42,9 +48,9 @@ let save = {
       [0, "3"],
       [0, "3"],
       [0, "3"],
-      [0, "9"],
-      [0, "9"],
-      [0, "9"],
+      [0, "243"],
+      [0, "243"],
+      [0, "243"],
       [0, "1e5"],
       [0, "1e5"],
       [0, "1e5"],
@@ -63,6 +69,24 @@ let save = {
       level: instance.level,
       enabled: instance.enabled
   })),
+  ExoticMatter: new Decimal("0"),
+  HCQR: new Decimal(0),
+  HPDQR: new Decimal(0),
+  Qupgrades: [
+    [0,"8"],
+    [0,"8"],
+    [0,"8"],
+    [0,"64"],
+    [0,"64"],
+    [0,"64"],
+  ]
+  },
+
+  antistuff: {
+    CarbonDestroyers: new Decimal(0),
+    ProductionDelay: new Decimal(0),
+    Diminish: new Decimal(0),
+    AntiProtons: new Decimal(0)
   },
 
   
@@ -71,6 +95,10 @@ function loadSave(savedData) {
     carbon = new Decimal(savedData.carbon);
     highestcarbonthisreset = new Decimal(savedData.highestcarbonthisreset);
     productionreduction = new Decimal(savedData.productionreduction);
+    totalcarbonthisreset = new Decimal(savedData.totalcarbonthisreset);
+    progression = savedData.progression;
+    time = savedData.time,
+    TimeSinceQuarkReset = savedData.TimeSinceQuarkReset,
   
     cg = new Decimal(savedData.carbonGenerators.cg);
     cgcost = new Decimal(savedData.carbonGenerators.cgcost);
@@ -100,6 +128,14 @@ function loadSave(savedData) {
       instance.enabled = data.enabled;
       return instance;
   });
+    ExoticMatter = new Decimal(savedData.quark.ExoticMatter)
+    HCQR = new Decimal(savedData.quark.HCQR)
+    HPDQR = new Decimal(savedData.quark.HPDQR)
+    Qupgrades = savedData.quark.Qupgrades
+    CarbonDestroyers = new Decimal(savedData.antistuff.CarbonDestroyers);
+    ProductionDelay = new Decimal(savedData.antistuff.ProductionDelay);
+    Diminish = new Decimal(savedData.antistuff.Diminish);
+    AntiProtons = new Decimal(savedData.antistuff.AntiProtons);
   }
   
   function saveData() {
@@ -107,6 +143,10 @@ function loadSave(savedData) {
         carbon: carbon.toString(),
         highestcarbonthisreset: highestcarbonthisreset.toString(),
         productionreduction: productionreduction.toString(),
+        totalcarbonthisreset: totalcarbonthisreset.toString(),
+        progression: progression,
+        time: Date.now(),
+        TimeSinceQuarkReset: TimeSinceQuarkReset,
 
         carbonGenerators: {
             cg: cg.toString(),
@@ -146,7 +186,18 @@ function loadSave(savedData) {
               level: instance.level,
               enabled: instance.enabled
           })),
-        }
+          ExoticMatter: ExoticMatter,
+          HCQR: HCQR,
+          HPDQR: HPDQR,
+          Qupgrades: Qupgrades,
+        },
+
+        antistuff: {
+          CarbonDestroyers: CarbonDestroyers.toString(),
+          ProductionDelay: ProductionDelay.toString(),
+          Diminish: Diminish.toString(),
+          AntiProtons: AntiProtons.toString()
+        },
     };
 
     return savedData;
@@ -167,6 +218,10 @@ function resetsaves() {
     carbon = new Decimal(10);
     highestcarbonthisreset = new Decimal(10);
     productionreduction = new Decimal(1);
+    totalcarbonthisreset = new Decimal(0);
+    time = Date.now();
+    TimeSinceQuarkReset = 0;
+    
 
     // Reset Carbon Generators
     cg = new Decimal(0);
@@ -185,12 +240,14 @@ function resetsaves() {
     boost = new Decimal("1");
     boostgainedonreset = new Decimal(0);
     boostupgrades = [
-        [0, "3"],
-        [0, "10"],
-        [0, "1e3"],
-        [0, "2.4e3"],
-        [0, "1e4"],
-        [0, "1e5"],
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
     ];
 
     // Reset Proton Stuff
@@ -200,9 +257,9 @@ function resetsaves() {
         [0, "3"],
         [0, "3"],
         [0, "3"],
-        [0, "9"],
-        [0, "9"],
-        [0, "9"],
+        [0, "243"],
+        [0, "243"],
+        [0, "243"],
         [0, "1e5"],
         [0, "1e5"],
         [0, "1e5"],
@@ -213,7 +270,26 @@ function resetsaves() {
     qresettimes = new Decimal("0");
     canqreset = 0;
     togqreset = false;
+    ExoticMatter = new Decimal("0");
+    MyObject.instances = [];
+    updateInstancesDisplay();
+    progression = 0;
+    HCQR = new Decimal(0);
+    HPDQR = new Decimal(0);
+    Qupgrades = [
+      [0,"8"],
+      [0,"8"],
+      [0,"8"],
+      [0,"64"],
+      [0,"64"],
+      [0,"64"],
+    ]
     
+    // Reset Anti Stuff
+    CarbonDestroyers = new Decimal(0);
+    ProductionDelay = new Decimal(0);
+    Diminish = new Decimal(0);
+    AntiProtons = new Decimal(0);
     // Save the reset state
     setsave();
 }
@@ -222,4 +298,4 @@ function resetsaves() {
 // For example, you can call it when a "Reset" button is clicked
 // resetButton.addEventListener("click", resetsave);
 
-setInterval(setsave, 10000);
+setInterval(setsave, 30000);

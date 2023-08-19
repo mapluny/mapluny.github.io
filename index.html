@@ -55,11 +55,12 @@
   <body>
     <div class="tabs-container">
       <ul class="tabs">
-        <li class="tab" onclick="showTab('carbon')">Carbon Tab</li>
-        <li class="tab" onclick="showTab('boost')">Boost Tab</li>
-        <li class="tab" onclick="showTab('proton')">Proton Tab</li>
-        <li class="tab" onclick="showTab('quark')">Quark tab</li>
-        <li class="tab" onclick="showTab('options')">Options and info</li>
+        <li id="carbonTab" class="tab" onclick="showTab('carbon')">Carbon</li>
+        <li id="boostTab" class="tab" onclick="showTab('boost')">Boost</li>
+        <li id="AutobuyerTab" class="tab" onclick="showTab('ab')">Autobuyers</li>
+        <li id="protonTab" class="tab" onclick="showTab('proton')">Proton</li>
+        <li id="quarkTab" class="tab" onclick="showTab('quark')">Quark</li>
+        <li id="options" class="tab" onclick="showTab('options')">Options</li>
       </ul>
     </div>
 
@@ -69,13 +70,13 @@
         <p>All production is divided by <span id="pdr">0</span></p>
         <p>Carbon: <span id="ca">0</span></p>
         <button id="buycg" onclick="buycg()">
-          Buy 1 carbon generator Cost: <span id="cgcost">0</span>
+          Buy 1 carbon Generator Cost: <span id="cgcost">0</span>
         </button>
-        <p>Carbon Generators: <span id="CGs">0</span></p>
+        <p>Carbon Generators: <span id="cgs">0</span></p>
         <button id="buypd" onclick="buypd()">
-          Increase ProductionSpeed Cost: <span id="pdcost">0</span>
+          Increase Production Speed Cost: <span id="pdcost">0</span>
         </button>
-        <p>CurrentProductionSpeed: <span id="cps">0</span></p>
+        <p>Current Production Speed: <span id="cps">0</span></p>
       </div>
     </div>
 
@@ -86,14 +87,13 @@
         <button id="reset1" onclick="reset1()">
           Reset to increase boost amount
         </button>
+        <p>Boost gain is based on the amount of carbon you have produced</p>
         <p>Boost gain soft cap at 1e15 boost.</p>
+        <p>Boost is a multiplier to all CGs.</p>
         <p>Boost milestones require a certain amount of boost to be awarded</p>
-        <p>3 boost: you start with 10 free carbon generators</p>
-        <p>10 boost: boost formula greatly improved, and you unlock autobuyers</p>
-        <p>1e3 boost: You start with +90 free carbon generators</p>
-        <p>2.4e3 boost: Production speed affects boost formula</p>
-        <p>1e4 boost: CGs improve boost formula</p>
-        <p>1e5 boost: Unlock Protons</p>
+        <div id="boostm">
+
+        </div>
       </div>
 
     </div>
@@ -102,61 +102,55 @@
         <h1>Proton</h1>
         <p>Protons: <span id="protons">0</span></p>
         <button id="crush" onclick="pcrush()">
-          Crush Carbon for Protons (Reqiures more than +1 Protons gained on crush)
+          Crush Carbon for Protons (Reqiures more than +1 protons gained on crush)
         </button>
-        <p>You can crush your Carbon into Protons, but this will divide your production by a massive amount for a certain amount of time. You can only crush if you have reached the 1e5 boost milestone. (P = Protons)</p>
-        <p>Your Proton cap is <span id="pl">0</span></p>
-        <button id="buypu1" onclick="buypu(0)">
-          Buy a Proton upgrade (Boost is stronger) Cost: 3P
-        </button>
-        <br>
-        <button id="buypu2" onclick="buypu(1)">
-          Buy a Proton upgrade (Boost formula is improved) Cost: 3P
-        </button>
-        <br>
-        <button id="buypu3" onclick="buypu(2)">
-          Buy a Proton upgrade (production speed is 2x) Cost: 3P
-        </button>
-        <br>
-        <button id="buypu4" onclick="buypu(3)">
-          Buy a Proton upgrade (You get free CGs based on production speed) Cost: 9P
-        </button>
-        <br>
-        <button id="buypu5" onclick="buypu(4)">
-          Buy a Proton upgrade (You gain free CGs based on Protons and +125 free CGs) Cost: 9P
-        </button>
-        <br>
-        <button id="buypu6" onclick="buypu(5)">
-          Buy a Proton upgrade (production speed is increased based on boost) Cost: 9P
-        </button>
-        <br>
-        <button id="buypu7" onclick="buypu(6)">
-          Buy a Proton upgrade (2x free CGs) Cost: 1e5P
-        </button>
-        <br>
-        <button id="buypu8" onclick="buypu(7)">
-          Buy a Proton upgrade (You gain more boost based on Protons) Cost: 1e5P
-        </button>
-        <br>
-        <button id="buypu9" onclick="buypu(8)">
-          Buy a Proton upgrade (Boost formula is improved) Cost: 1e5P
-        </button>
+        <p>You can crush your Carbon into protons, but this will divide your production by a massive amount for a certain amount of time. You can only crush if you have reached the 1e5 boost milestone. (p = Protons)</p>
+        <p>Your proton cap is <span id="pl">0</span></p>
+        <p>you unlock Quarks at 1e10 Protons</p>
+        <div id="protonm">
+
+          <div>
       </div>
     </div>
+  </div>
+</div>
 
     <div class="tab-content" id="quark-content">
       <div class="qc">
         <h1>Quarks</h1>
-        <p>Quarks can be disabled and enabled, quarks give a random buff. You can only have 4 Quarks enabled at once.</p>
+        <p>Quarks can be disabled and enabled, Quarks give a random buff. You can only have 4 Quarks enabled at once.</p>
         <p>You can only disable Quarks if you Quark reset, and you can only delete Quarks that are disabled.</p>
-        <p>Quark levels are based on boost, and Protons.</p>
+        <p>Quark levels are based on Boost, and Protons.</p>
+        <p>Exotic Matter (EM) is based on Carbon and Production Speed.</p>
         <button id="reset2" onclick="reset2()">
-          Reset Everything before this point to gain a random Quark (Requires 1e15 boost, and 1e10 Protons)
+          Reset Everything before this point to gain a random Quark (Requires 1e15 Boost, and 1e10 Protons)
         </button>
-        <p>Reseting now would give you a level <span id="qlevel">0</span> Quark.</p>
+        <p>Reseting now would give you a level <span id="qlevel">0</span> quark, and <span id="emdr">0</span> Exotic Matter</p>
+        <p>You have: <span id="emd">0</span> Exotic Matter</p>
         <button id="reset2" onclick="togquarks()">
           Disable all Quarks on reset? <span id="dqr">0</span>
         </button>
+        <div class="button-container">
+          <button class="corner-button" id="QUpg0" onclick="buyqu(0)">
+            You start with 1e10 Carbon Cost: 8EM
+            </button>
+          <button class="corner-button" id="QUpg1" onclick="buyqu(1)">
+          You start with 1e5 Boost Cost: 8EM
+          </button>
+          <button class="corner-button" id="QUpg2" onclick="buyqu(2)">
+            You start with 3 Protons Cost: 8EM
+            </button>
+            <button class="corner-button" id="QUpg3" onclick="buyqu(3)">
+              CGs, Production Speed, and Boost are stronger based on EM Cost: 64EM
+            </button>
+            <button class="corner-button" id="QUpg4" onclick="buyqu(4)">
+              You start resets with all Protons upgrades bought. Cost: 64EM
+            </button>
+            <button class="corner-button" id="QUpg5" onclick="buyqu(5)">
+              Unlock autobuyers for the Proton multiplier upgrade. Cost: 64EM
+            </button>
+        </div>
+
         <div id="instances"></div>
         
 
@@ -164,31 +158,30 @@
     </div>
 
     <div class="tab-content" id="options-content">
-      <div class="qc">
+      <div class="op">
         <h1>Carbon GAME</h1>
         <p>The game automatically saves every 10 seconds.</p>
         <button id="fullr" onclick="resetsave()">
           Reset your save.
         </button>
-        <p>Down here shows you how most of the game works</p>
-        <p>Carbon: The main resource, can be used to buy Carbon generators (CG), and Production Speed.</p>
-        <br>
-        <p>Carbon Generators (CGs) The base cost for one is 10, and the price increases by 1.5x times everytime it is bought.</p>
-        <br>
-        <p>Production speed: A multiplier to CGs, base cost is 100, and the price increases by 10x everytime it is bought, the price multiplier increases by 1 when it has been purchased 308 times.</p>
-        <br>
-        <p>Boost: Boosting resets CGs, production speed, and Carbon but you gain a multiplier to all CGs based on the carbon you had before boosting, There are boost milestones which unlock buffs.</p>
-        <br>
-        <p>Protons: Protons are unlocked upon reach 1e5 boost, then which you can Carbon Crush which resets your carbon to 0, but all production is reduced based on the amount of Protons you get. You can use Protons to buy upgrades</p>
-        <br>
-        <p>Quark reset: Quark reset resets everything before this point, but you gain a random Quark.</p>
-        <br>
-        <p>Quarks: Quarks can be enabled and disabled, and you can only have 4 enabled at once, Quarks have types, effects, and levels. The types are, carbon, production, boost, and Proton, each type has 3 different effects, the effects are stronger based on the level of the Quark.</p>
-        <br>
-        <p>There is no end to the game, just try and get as much carbon as you can.</p>
+      </div>
+    </div>
+
+    <div class="tab-content" id="ab-content">
+      <div class="ab">
+        <h1>Autobuyers</h1>
+        <p>Autobuyers can only be toggled if you have unlocked them.</p>
+        <button id="tcg" onclick="toggleab(0)">
+          Toggle CG autobuyer. <span id="tcgs">0</span>
+        </button>
+        <button id="tps" onclick="toggleab(1)">
+          Toggle Production Speed autobuyer. <span id="tpss">0</span>
+        </button>
       </div>
     </div>
     
+    <script src="checkreq.js"></script>
+    <script src="registerupgdata.js"></script>
     <script src="Inventory.js"></script>
     <script src="notifications.js"></script>
     <script src="modal.js"></script>
