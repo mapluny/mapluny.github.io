@@ -141,7 +141,7 @@ pd = new Decimal(1.5).pow(pdboughttimes);
   };
 
   let freecgs = new Decimal(0);
-  bgor = new Decimal(10).pow(Decimal.log(totalcarbonthisreset).div(8.7)).minus(2);
+  bgor = new Decimal(10).pow(Decimal.log(totalcarbonthisreset.plus(1)).div(8.7)).minus(2);
   if (boostupgrades[0] == 1) {
     cg = cg.times(2)
   }
