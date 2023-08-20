@@ -321,7 +321,7 @@ pd = new Decimal(1.5).pow(pdboughttimes);
     }
 }
   boostgainedonreset = Decimal.max(bgor, 0);
-  productionreduction = getnextproductionreduction(prspeed.plus(0.01));
+  productionreduction = Decimal.max(getnextproductionreduction(prspeed),1);
 
 	freecgs = freecgs.mul(freecgmult);
 
