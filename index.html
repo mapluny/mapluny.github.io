@@ -53,6 +53,10 @@
   </head>
 
   <body>
+    <p class="text">Percent to next goal</p>
+      <div class="progress-container">
+        <div class="progress-bar" id="myBar"></div>
+      </div>      
     <div class="tabs-container">
       <ul class="tabs">
         <li id="carbonTab" class="tab" onclick="showTab('carbon')">Carbon</li>
@@ -67,15 +71,11 @@
     <div class="tab-content" id="carbon-content">
       <div class="container">
         <h1>Carbon</h1>
-        <p>All production is divided by <span id="pdr">0</span></p>
+        <p>You are gaining: <span id="pdr">0</span> Carbon per second</p>
         <p>Carbon: <span id="ca">0</span></p>
-        <button id="buycg" onclick="buycg()">
-          Buy 1 carbon Generator Cost: <span id="cgcost">0</span>
-        </button>
+        <div class="cgbuy"></div>
         <p>Carbon Generators: <span id="cgs">0</span></p>
-        <button id="buypd" onclick="buypd()">
-          Increase Production Speed Cost: <span id="pdcost">0</span>
-        </button>
+        <div class="pdbuy"></div>
         <p>Current Production Speed: <span id="cps">0</span></p>
       </div>
     </div>
@@ -88,9 +88,7 @@
           Reset to increase boost amount
         </button>
         <p>Boost gain is based on the amount of carbon you have produced</p>
-        <p>Boost gain soft cap at 1e15 boost.</p>
-        <p>Boost is a multiplier to all CGs.</p>
-        <p>Boost milestones require a certain amount of boost to be awarded</p>
+        <p>Boost provides a multiplier to Carbon Generation (Boost ^ 2.5). Currently x<span id="boostMult">0</span></p>
         <div id="boostm">
 
         </div>
@@ -180,13 +178,19 @@
       </div>
     </div>
     
+    <script src="break_eternity.min.js"></script>
+    <script src="utils.js"></script>
     <script src="checkreq.js"></script>
+    <script src="currency.js"></script>
+    <script src="buyable.js"></script>
+    <script src="updatehtml.js"></script>
+    <script src="effect.js"></script>
     <script src="registerupgdata.js"></script>
     <script src="Inventory.js"></script>
     <script src="notifications.js"></script>
     <script src="modal.js"></script>
-    <script src="decimal.js"></script>
     <script src="save.js"></script>
+    <script src="boost.js"></script>
     <script src="main.js"></script>
     <script>
       const tabs = document.querySelectorAll('.tab');

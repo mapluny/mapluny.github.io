@@ -89,6 +89,11 @@ body {
   text-align: center;
 }
 
+.text {
+  text-align: center;
+  color: white;
+}
+
 .container2 {
   text-align: center;
   color: #333;
@@ -193,4 +198,16 @@ button:disabled:hover {
   opacity: 1;
   transition: opacity 0.5s;
 }
+
+.progress-container {
+  width: 100%;
+  background-color: #f1f1f1;
+}
+
+.progress-bar {
+  height: 30px;
+  background-color: #4caf50;
+  transition: width 0.5s;
+}
+
 

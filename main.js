@@ -21,16 +21,7 @@ let autobuyers = [1, 1]
 // Boost Stuff
 let boost = new Decimal("1");
 let boostgainedonreset = new Decimal(0);
-let boostupgrades = [
-  0,
-  0,
-  0,
-  0,
-	0,
-  0,
-  0,
-  0
-]
+
 // Proton Stuff
 let protons = new Decimal("0");
 let protongainedonreset = new Decimal(1);
@@ -93,9 +84,6 @@ function formatnum(number) {
 // Get DOM elements
 const pointsDisplay = document.getElementById("ca");
 const cgs = document.getElementById("cgs");
-const cgcostd = document.getElementById("cgcost");
-const pdd = document.getElementById("cps");
-const pdcostd = document.getElementById("pdcost");
 const boostd = document.getElementById("boost");
 const protonsd = document.getElementById("protons");
 const pdrd = document.getElementById("pdr");
@@ -106,8 +94,10 @@ const tcgsd = document.getElementById("tcgs");
 const tpssd = document.getElementById("tpss");
 const emd = document.getElementById("emd");
 const emdr = document.getElementById("emdr");
+const cgbuy = document.getElementsByClassName("cgbuy")[0]
+const pdbuy = document.getElementsByClassName("pdbuy")[0]
 
-function tick() {
+function tick(diff) {
   autobuyertimerdiv = 1;
   autobuyerbulk = 0;
   timer++
@@ -133,46 +123,11 @@ let pdPriceMult = new Decimal(1);
 
 
 pd = new Decimal(1.5).pow(pdboughttimes);
-  for (let i = 0; i < BU.length; i++) {
-    const upgid = BU.find(item => item.id == i);
-    if (boost.gte(new Decimal(upgid.cost))) {
-      boostupgrades[upgid.id] = 1;
-    }
-  };
 
   let freecgs = new Decimal(0);
-  bgor = new Decimal(10).pow(Decimal.log(totalcarbonthisreset.plus(1)).div(8.7)).minus(2);
-  if (boostupgrades[0] == 1) {
-    cg = cg.times(2)
-  }
-  if (boostupgrades[1] == 1) {
-    freecgs = freecgs.plus(5);
-  }
-  if (boostupgrades[2] == 1) {
-    pdPriceMult = pdPriceMult.div(2)
-    autobuyerbulk++
-  }
-  if (boostupgrades[3] == 1) {
-    pd = pd.mul(2)
-  }
-  if (boostupgrades[4] == 1) {
-    bgor = bgor.times(pd.mul(2).pow(0.8));
-  }
-  if (boostupgrades[5] == 1) {
-    bgor = bgor.mul(cg.mul(0.5));
-  }
-  if (boostupgrades[6] == 1) {
-    freecgs = freecgs.plus(1);
-  }
-  if (boostupgrades[7] == 1) {
-    autobuyerbulk++
-  }
 
 	if (protonupgrades[0][0] == 1) {
 	bstrength = bstrength.times(10);
-	}
-	if (protonupgrades[1][0] == 1) {
-	bgor = bgor.pow(1.05);
 	}
 	if (protonupgrades[2][0] == 1) {
 	pd = pd.mul(2);
@@ -185,9 +140,6 @@ pd = new Decimal(1.5).pow(pdboughttimes);
 	}
 	if (protonupgrades[6][0] == 1) {
 	freecgmult = freecgmult.mul(12)
-	}
-	if (protonupgrades[7][0] == 1) {
-	bgor = bgor.mul(protons)
 	}
 	if (protonupgrades[8][0] == 1) {
 	prspeed = prspeed.mul(100);
@@ -226,12 +178,6 @@ pd = new Decimal(1.5).pow(pdboughttimes);
   if (protonupgrades[5][0] >= 1) {
     protongainedonreset = protongainedonreset.mul(new Decimal(2).pow(protonupgrades[5][0]))
     }
-
-	if (bgor.gte("1e15")) {
-
-	bgor = Decimal.max(bgor.div(bgor.pow(0.3)),"1e15")
-	
-	}
   ActiveEffects = [0,0,0]
 
   for (const instance of MyObject.instances) {
@@ -281,10 +227,6 @@ pd = new Decimal(1.5).pow(pdboughttimes);
         }
 
         if (t == 2) {
-          if (element == 0) {
-            es = geteffecttoname(t,[element],l,1)
-            bgor = bgor.mul(es)
-          }
           if (element == 1) {
             es = geteffecttoname(t,[element],l,1)
             bstrength = bstrength.mul(es)
@@ -320,7 +262,6 @@ pd = new Decimal(1.5).pow(pdboughttimes);
       });
     }
 }
-  boostgainedonreset = Decimal.max(bgor, 0);
   productionreduction = Decimal.max(getnextproductionreduction(prspeed),1);
 
 	freecgs = freecgs.mul(freecgmult);
@@ -328,7 +269,7 @@ pd = new Decimal(1.5).pow(pdboughttimes);
   newc = cg.plus(freecgs).times(cgmult).times(pd).times(boost.times(bstrength));
   newcrd = newc.div(new Decimal(100).mul(productionreduction));
 
-  carbon = carbon.plus(newcrd);
+  Currencies.carbon.tick(diff);
   totalcarbonthisreset = totalcarbonthisreset.plus(newcrd);
   power = new Decimal(10).plus(Decimal.max(pdboughttimes.mul(5).minus(1540),0))
   pdcost = new Decimal(100).times(power.pow(pdboughttimes));
@@ -340,33 +281,18 @@ pd = new Decimal(1.5).pow(pdboughttimes);
   const Div = document.getElementById('boostm');
 Div.innerHTML = '';
 
-BU.forEach(UpgradeID => {
-  const paragraph = document.createElement('p');
-  paragraph.textContent = `${UpgradeID.cost} Boost: ${UpgradeID.text}`;
-  Div.appendChild(paragraph);
-
-  if (boostupgrades[UpgradeID.id] == 1) {
-    paragraph.style.color = 'green';
-  }
-  if (boostupgrades[UpgradeID.id] == 0) {
-    paragraph.style.color = 'maroon';
-  }
-  
-
-});
-
 if (carbon.isNaN == true) {
   fixNaN()
 }
 
-
+  
 
 
   if (timer%50 >= 49/autobuyertimerdiv) {
     autobuy(autobuyerbulk)
   }
 
-  if (boostgainedonreset.gte(0.1)){
+  if (boostGained(highestcarbonthisreset).gte(1)){
     progression = Math.max(1,progression)
   }
   if (boost.gte("1e5")){
@@ -379,14 +305,10 @@ if (carbon.isNaN == true) {
     protons = plimit.minus(1);
     }
 
-
   pointsDisplay.textContent = formatnum(carbon);
-  pdrd.textContent = formatnum(new Decimal(100).mul(productionreduction).minus(99));
-  cgs.textContent = formatnum(cg.plus(freecgs));
-  cgcostd.textContent = formatnum(getcgcost(1));
-  pdd.textContent = formatnum(pd);
-  pdcostd.textContent = formatnum(pdcost);
-  boostd.textContent = formatnum(boost) + " + " + formatnum(boostgainedonreset);
+  pdrd.textContent = formatnum(effects.getEffectValueForClass("carbonGen"));
+  cgs.textContent = formatnum(CGupgrade.set);
+  boostd.textContent = formatnum(Currencies.boost.value) + " + " + formatnum(boostGained(highestcarbonthisreset));
 	protonsd.textContent = formatnum(protons) + " + " + formatnum(protongainedonreset);
   dqr.textContent = togqreset ? "yes" : "no";
   pl.textContent = formatnum(plimit);
@@ -395,6 +317,9 @@ if (carbon.isNaN == true) {
   tpssd.textContent = autobuyers[1] ? "enabled" : "disabled";
   emd.textContent = formatnum(ExoticMatter);
   emdr.textContent = formatnum(GetEmOnReset());
+  document.getElementById("cps").textContent = formatnum(effects.pd.effectValue)
+  document.getElementById("boostMult").textContent = formatnum(effects.boost.effectValue)
+  document.getElementById("myBar").style.width = progressBarProgress() * 100 + `%`;
   
 
 
@@ -431,6 +356,22 @@ function getnextproductionreduction(pspeed) {
   return num;
 }
 
+function updateHTML(active) {
+  if (active.find(d => "cg/pd")) {
+    cgbuy.innerHTML = ``
+    cgbuy.append(RemakeRebuyableButton(CGupgrade))
+    pdbuy.innerHTML = ``
+    pdbuy.append(RemakeRebuyableButton(PDupgrade))
+  }
+}
+
+function progressBarProgress() {
+  switch (progression) {
+  case 0: return Math.min(boostGained(highestcarbonthisreset).min(1).toNumber(), 1)
+  case 1: return Currencies.boost.value.log(10).div("5").min(1).toNumber()
+  }
+}
+
 function UpdatePU() {
   const buttonsContainer = document.getElementById('protonm');
   buttonsContainer.innerHTML = '';
@@ -464,9 +405,6 @@ function getcgcost(steps) {
   t = cgboughttimes.plus(steps);
   cgcostmul = new Decimal(1);
   cgcostincrement = new Decimal(1.5);
-  if (boostupgrades[4] == 1) {
-    cgcostmul = cgcostmul.times(0.75);
-  }
   cgcostb = new Decimal(cgcostincrement).pow(t);
   cgcostb = cgcostb.times(cgcostmul);
   return cgcostb;
@@ -478,37 +416,13 @@ function GetEmOnReset() {
   return Decimal.round(logC.div(2.6).times(logPS.div(2.6).div(5)))
 }
 
-function buycg() {
-
-  if (carbon.gte(getcgcost(1))) {
-    carbon = carbon.minus(getcgcost(1));
-    cgboughttimes = cgboughttimes.plus(1);
-  }
-
-}
-
-function buypd() {
-  if (carbon.gte(pdcost)) {
-    carbon = carbon.minus(pdcost);
-    pdboughttimes = pdboughttimes.plus(1);
-    power = new Decimal(10).plus(Decimal.max(pdboughttimes.minus(308),0))
-    pdcost = new Decimal(100).times(power.pow(pdboughttimes));
-  }
-
-}
-
 function togquarks() {
   togqreset = !togqreset;
 }
 
-function resetBoostUpgrade() {
-  for (let i = 0; i < boostupgrades.length; i++) {
-    boostupgrades[i] = 0;
-  }
-}
-
 function reset1() {
-  if (boostgainedonreset.gte(0.1)) {
+  if (boostGained(highestcarbonthisreset).gte(0.1)) {
+    boost = boost.plus(boostGained(highestcarbonthisreset));
     carbon = new Decimal(10);
     cg = new Decimal(0);
     cgboughttimes = new Decimal(0);
@@ -519,8 +433,9 @@ function reset1() {
     pdboughttimes = new Decimal(0);
     cgmult = new Decimal(0);;
     totalcarbonthisreset = new Decimal(0);
-  
-    boost = boost.plus(boostgainedonreset);
+    buyableSets.cg = new Decimal(0);
+    buyableSets.pd = new Decimal(0);
+    updateHTML(["cg/pd"])
   }
 
 
@@ -540,7 +455,6 @@ function reset2() {
     productionreduction = new Decimal(1);
     HCQR = new Decimal(0);
     HPDQR = new Decimal(0);
-    resetBoostUpgrade()
   
     protonupgrades.forEach(upg => {
   
@@ -575,7 +489,7 @@ function getqlevel(floor, fake, fakeeffects) {
 }
 
 function pcrush() {
-if (protongainedonreset.gte(1) && boostupgrades[7] == 1){
+if (protongainedonreset.gte(1) && Currencies.boost.gte("1e5")){
 
 productionreduction = productionreduction.plus(protongainedonreset.pow(1.33))
 carbon = new Decimal(10);
@@ -587,7 +501,6 @@ function buypu(upgid, price) {
 if (protons.gte(new Decimal(price)) && PU[upgid].mbuytimes !== protonupgrades[upgid][0] ) {
 protons = protons.minus(price)
 protonupgrades[upgid][0]++;
-console.log(protonupgrades[upgid])
 return true;
 }
 return false;
@@ -598,7 +511,6 @@ function buyqu(upgid) {
   if (ExoticMatter.gte(new Decimal(upgcost)) ) {
   ExoticMatter = ExoticMatter.minus(upgcost)
   Qupgrades[upgid][0]++;
-  console.log(Qupgrades[upgid])
   }
   }
 
@@ -633,19 +545,22 @@ function buymax(buy, mbt) {
     mbt = 1;
   }
   const MaxBuyTimes = mbt;
-  if (buy == 0) {
+  if (buy == 0 && CGupgrade.canBuy) {
     let i = 1;
     while (i <= MaxBuyTimes) {
-      buycg();
+      CGupgrade.purchase();
+      updateHTML(["cg/pd"]);
+      if (!CGupgrade.canBuy) break
       i++;
     }
   }
 
-  if (buy == 1) {
+  if (buy == 1 && !CGupgrade.canBuy) {
     let i = 1;
     while (i <= MaxBuyTimes) {
-      price = 
-      buypd();
+      PDupgrade.purchase();
+      updateHTML(["cg/pd"]);
+      if (!PDupgrade.canBuy) break
       i++;
     }
   }
@@ -882,7 +797,6 @@ function resetsave() {
       clickHandler: () => {
         resetsaves();
         modalLibrary.showModal("<p>Save reset.</p>", []);
-        console.log("WORK");
       }
     },
   ];
@@ -912,5 +826,8 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-setInterval(tick, 10)
+setInterval(function() {
+  tick(1)
+}, 10)
 setInterval(UpdatePU, 1000)
+updateHTML(["cg/pd"])

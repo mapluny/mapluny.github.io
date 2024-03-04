@@ -6,6 +6,10 @@ let save = {
   progression: 0,
   time: Date.now(),
   TimeSinceQuarkReset: 0,
+  buyableSets: {
+    cg: new Decimal(0),
+    pd: new Decimal(0)
+},
 
   // Carbon Generators
   carbonGenerators: {
@@ -28,16 +32,6 @@ let save = {
   boost: {
     boost: new Decimal("1"),
     boostgainedonreset: new Decimal(0),
-    boostupgrades: [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
   },
 
   // Proton Stuff
@@ -113,7 +107,6 @@ function loadSave(savedData) {
   
     boost = new Decimal(savedData.boost.boost);
     boostgainedonreset = new Decimal(savedData.boost.boostgainedonreset);
-    boostupgrades = [...savedData.boost.boostupgrades];
   
     protons = new Decimal(savedData.proton.protons);
     protongainedonreset = new Decimal(savedData.proton.protongainedonreset);
@@ -136,6 +129,11 @@ function loadSave(savedData) {
     ProductionDelay = new Decimal(savedData.antistuff.ProductionDelay);
     Diminish = new Decimal(savedData.antistuff.Diminish);
     AntiProtons = new Decimal(savedData.antistuff.AntiProtons);
+    buyableSets = {
+      cg: new Decimal(savedData.buyableSets.cg),
+      pd: new Decimal(savedData.buyableSets.pd)
+    }
+    updateHTML(["cg/pd"])
   }
   
   function saveData() {
@@ -147,6 +145,10 @@ function loadSave(savedData) {
         progression: progression,
         time: Date.now(),
         TimeSinceQuarkReset: TimeSinceQuarkReset,
+        buyableSets: {
+          cg: buyableSets.cg.toString(),
+          pd: buyableSets.pd.toString()
+        },
 
         carbonGenerators: {
             cg: cg.toString(),
@@ -166,7 +168,6 @@ function loadSave(savedData) {
         boost: {
             boost: boost.toString(),
             boostgainedonreset: boostgainedonreset.toString(),
-            boostupgrades: [...boostupgrades]
         },
 
         proton: {
@@ -221,6 +222,10 @@ function resetsaves() {
     totalcarbonthisreset = new Decimal(0);
     time = Date.now();
     TimeSinceQuarkReset = 0;
+    buyableSets = {
+      cg: new Decimal(0),
+      pd: new Decimal(0)
+  }
     
 
     // Reset Carbon Generators
@@ -239,16 +244,6 @@ function resetsaves() {
     // Reset Boost Stuff
     boost = new Decimal("1");
     boostgainedonreset = new Decimal(0);
-    boostupgrades = [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ];
 
     // Reset Proton Stuff
     protons = new Decimal("0");
