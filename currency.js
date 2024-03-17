@@ -72,10 +72,24 @@ Currencies = {
         },
         perSecond: () => effects.getEffectValueForClass("carbonGen")
     }),
+    nanoBot: new DecimalResource({
+        name: "Nano Bot",
+        value: () => player.nanoBots,
+        setValue: (x) => {
+            player.nanoBots = x
+        },
+        perSecond: () => protonData.getIsUpgradeBought(8) ? new Decimal(1).times(effects.getEffectValueForClass("nanoBot")) : new Decimal(0)
+    }),
     boost: new DecimalResource({
         name: "Boost",
         value: () => boost,
         setValue: (x) => boost = x,
+        perSecond: () => new Decimal(0)
+    }),
+    protons: new DecimalResource({
+        name: "Proton",
+        value: () => protons,
+        setValue: (x) => protons = x,
         perSecond: () => new Decimal(0)
     })
 }

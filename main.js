@@ -36,16 +36,13 @@ let protonupgrades = [
 [0,"1e5"],
 [0,"1e5"],
 ]
-let plimit = new Decimal("1e10");
+let plimit = new Decimal("1e25");
 let prspeed = new Decimal("1");
 
 // Quark Stuff
 let qresettimes = new Decimal("0")
 let canqreset = 0;
 let togqreset = false;
-let quarkchallenges = [
-  [0,"protons.lte(1) && boost.lte(1e15)"]
-]
 let ExoticMatter = new Decimal("0");
 let HCQR = new Decimal(0);
 let HPDQR = new Decimal(0);
@@ -69,17 +66,65 @@ let ProductionDelay = new Decimal(0);
 let Diminish = new Decimal(0);
 let AntiProtons = new Decimal(0);
 
-function formatnum(number) {
-  const num = new Decimal(number);
+// Honestly to lazy to put all of those variables into a player object sooo
 
-  if (num.gte(1000)) {
-    string = num.toExponential(2);
-    string = string.split("+").join('');
-    return string;
+let player = {
+  nanoBots: new Decimal(0),
+  chosenMultiplier: 0,
+}
+
+
+function formatnum(Num, places=2) {
+  if (!isDecimal(Num)) Num = new Decimal(Num)
+  e = Num.log(10).floor()
+  m = Num.div(new Decimal(10).pow(e.plus("1e-7"))).toFixed(2)
+  if (Num.eq("0")) {
+    return `0`
+  }
+  if (Num.gte("1ee9")) {
+    return `ee${Num.iteratedlog(10, 2).toFixed(2)}`
+  }
+  if (Num.gte("1e1000")) {
+      return `e${Num.log(10).toFixed(2)}`
+  }
+  if (Num.gte(1000)) {
+      if (m == 10) {
+          m = "1.00";
+          e = e.plus(1);
+      }
+      return `${m}e${e}`
+  }
+  if (Num.lte("1e-1000")) {
+    return `e${Num.log(10).toFixed(2)}`
+  }
+  if (Num.lte("1ee-9")) {
+  return `ee${Num.iteratedlog(10, 2).toFixed(2)}`
+  }
+  return Num.toStringWithDecimalPlaces(places);
+}
+
+function formatTime(timeInMilliseconds) {
+  if (!isDecimal(timeInMilliseconds)) timeInMilliseconds = new Decimal(timeInMilliseconds);
+  let timeInSeconds = timeInMilliseconds.div(1000);
+  let timeInMinutes = timeInSeconds.div(60);
+  let timeInHours = timeInMinutes.div(60);
+  let timeInDays = timeInHours.div(24);
+
+  if (timeInMilliseconds.lt(1000)) {
+      return `${timeInMilliseconds.toFixed(2)} ms`;
+  } else if (timeInSeconds.lt(60)) {
+      return `${timeInSeconds.toFixed(2)} Seconds`;
+  } else if (timeInMinutes.lt(60)) {
+      return `${timeInMinutes.toFixed(2)} Minutes`;
+  } else if (timeInHours.lt(24)) {
+      return `${timeInHours.toFixed(2)} Hours`;
+  } else if (timeInDays.lt(365)) {
+      return `${timeInDays.toFixed(2)} Days`;
   } else {
-    return num.toFixed(3).toString();
+      return `<1 year`;
   }
 }
+
 
 // Get DOM elements
 const pointsDisplay = document.getElementById("ca");
@@ -103,7 +148,7 @@ function tick(diff) {
   timer++
   TimeSinceQuarkReset++
   quarksen = MyObject.getEnabledCount;
-  plimit = new Decimal("1e10");
+  plimit = new Decimal("1e100");
   plimitmul = new Decimal(1);
   prspeed = new Decimal("1");
 
@@ -125,25 +170,6 @@ let pdPriceMult = new Decimal(1);
 pd = new Decimal(1.5).pow(pdboughttimes);
 
   let freecgs = new Decimal(0);
-
-	if (protonupgrades[0][0] == 1) {
-	bstrength = bstrength.times(10);
-	}
-	if (protonupgrades[2][0] == 1) {
-	pd = pd.mul(2);
-	}
-	if (protonupgrades[3][0] == 1) {
-    freecgs = freecgs.plus(protons.pow(1.1))
-	}
-	if (protonupgrades[4][0] == 1) {
-    pdPriceMult = pdPriceMult.div(5)
-	}
-	if (protonupgrades[6][0] == 1) {
-	freecgmult = freecgmult.mul(12)
-	}
-	if (protonupgrades[8][0] == 1) {
-	prspeed = prspeed.mul(100);
-	}
 
   if (Qupgrades[0][0] == 1) {
     carbon = Decimal.max(carbon, "1e5");
@@ -169,17 +195,6 @@ pd = new Decimal(1.5).pow(pdboughttimes);
                   }
                 }
               }
-  
-
-
-  highestcarbonthisreset = Decimal.max(carbon, highestcarbonthisreset);
-
-	protongainedonreset = Decimal.round(carbon.div("5e7").pow(0.3));
-  if (protonupgrades[5][0] >= 1) {
-    protongainedonreset = protongainedonreset.mul(new Decimal(2).pow(protonupgrades[5][0]))
-    }
-  ActiveEffects = [0,0,0]
-
   for (const instance of MyObject.instances) {
     t = instance.type
     e = instance.effects
@@ -262,7 +277,7 @@ pd = new Decimal(1.5).pow(pdboughttimes);
       });
     }
 }
-  productionreduction = Decimal.max(getnextproductionreduction(prspeed),1);
+  productionreduction = Decimal.max(getNextPR(diff, productionreduction), 1);
 
 	freecgs = freecgs.mul(freecgmult);
 
@@ -270,6 +285,7 @@ pd = new Decimal(1.5).pow(pdboughttimes);
   newcrd = newc.div(new Decimal(100).mul(productionreduction));
 
   Currencies.carbon.tick(diff);
+  Currencies.nanoBot.tick(diff)
   totalcarbonthisreset = totalcarbonthisreset.plus(newcrd);
   power = new Decimal(10).plus(Decimal.max(pdboughttimes.mul(5).minus(1540),0))
   pdcost = new Decimal(100).times(power.pow(pdboughttimes));
@@ -277,9 +293,7 @@ pd = new Decimal(1.5).pow(pdboughttimes);
   pdcost = pdcost.pow(pdcostpower);
   HCQR = HCQR.plus(newcrd);
   HPDQR = Decimal.max(pd,HPDQR);
-
-  const Div = document.getElementById('boostm');
-Div.innerHTML = '';
+  updateHTML()
 
 if (carbon.isNaN == true) {
   fixNaN()
@@ -305,11 +319,11 @@ if (carbon.isNaN == true) {
     protons = plimit.minus(1);
     }
 
-  pointsDisplay.textContent = formatnum(carbon);
+  pointsDisplay.textContent = formatnum(Currencies.carbon.value);
   pdrd.textContent = formatnum(effects.getEffectValueForClass("carbonGen"));
   cgs.textContent = formatnum(CGupgrade.set);
   boostd.textContent = formatnum(Currencies.boost.value) + " + " + formatnum(boostGained(highestcarbonthisreset));
-	protonsd.textContent = formatnum(protons) + " + " + formatnum(protongainedonreset);
+	protonsd.textContent = formatnum(protons) + " + " + formatnum(protonsGained(Currencies.carbon.value));
   dqr.textContent = togqreset ? "yes" : "no";
   pl.textContent = formatnum(plimit);
   qleveld.textContent = formatnum(Decimal.max(getqlevel(true),1));
@@ -319,7 +333,11 @@ if (carbon.isNaN == true) {
   emdr.textContent = formatnum(GetEmOnReset());
   document.getElementById("cps").textContent = formatnum(effects.pd.effectValue)
   document.getElementById("boostMult").textContent = formatnum(effects.boost.effectValue)
+  document.getElementById("boostmMult").textContent = formatnum(effects.boostUpg.effectValue)
   document.getElementById("myBar").style.width = progressBarProgress() * 100 + `%`;
+  document.getElementById("nanobot").textContent = formatnum(Currencies.nanoBot.value)
+  document.getElementById("nanobotmul").textContent = formatnum(effects.nanoMult.effectValue)
+  document.getElementById("timepr").textContent = productionreduction.eq(1) ?`Your production is normal` : `Your production will be normal in `+formatTime(getTimeToFinishPR(productionreduction))
   
 
 
@@ -357,12 +375,17 @@ function getnextproductionreduction(pspeed) {
 }
 
 function updateHTML(active) {
-  if (active.find(d => "cg/pd")) {
-    cgbuy.innerHTML = ``
-    cgbuy.append(RemakeRebuyableButton(CGupgrade))
-    pdbuy.innerHTML = ``
-    pdbuy.append(RemakeRebuyableButton(PDupgrade))
+  if (!active) {
+    SetRebuyable.instances.forEach(rebuyable => {
+          RemakeRebuyableButton(rebuyable);
+    });
+  return
   }
+    SetRebuyable.instances.forEach(rebuyable => {
+        if (active(rebuyable.config.set)) {
+            RemakeRebuyableButton(rebuyable);
+        }
+    });
 }
 
 function progressBarProgress() {
@@ -370,35 +393,6 @@ function progressBarProgress() {
   case 0: return Math.min(boostGained(highestcarbonthisreset).min(1).toNumber(), 1)
   case 1: return Currencies.boost.value.log(10).div("5").min(1).toNumber()
   }
-}
-
-function UpdatePU() {
-  const buttonsContainer = document.getElementById('protonm');
-  buttonsContainer.innerHTML = '';
-
-  PU.forEach(item => {
-      let cost = new Decimal(item.cost)
-      let h = new Decimal(item.pricemult)
-      let g = new Decimal(protonupgrades[item.id][0])
-      cost = cost.mul(h.pow(g))
-      const button = document.createElement('button');
-      button.textContent = `${item.text} Cost: ${formatnum(cost)} P`;
-      button.className = 'protonm';
-      
-      button.addEventListener('click', () => {
-          if (buypu(item.id, cost) == true){
-            UpdatePU()
-          }
-
-      });
-      if (protonupgrades[item.id][0] == item.mbuytimes) {
-        button.disabled = 1
-      }
-      else {button.disabled = 0}
-
-
-      buttonsContainer.appendChild(button);
-  });
 }
 
 function getcgcost(steps) {
@@ -435,7 +429,7 @@ function reset1() {
     totalcarbonthisreset = new Decimal(0);
     buyableSets.cg = new Decimal(0);
     buyableSets.pd = new Decimal(0);
-    updateHTML(["cg/pd"])
+    updateHTML()
   }
 
 
@@ -488,15 +482,6 @@ function getqlevel(floor, fake, fakeeffects) {
   }
 }
 
-function pcrush() {
-if (protongainedonreset.gte(1) && Currencies.boost.gte("1e5")){
-
-productionreduction = productionreduction.plus(protongainedonreset.pow(1.33))
-carbon = new Decimal(10);
-protons = protons.plus(protongainedonreset);
-}
-}
-
 function buypu(upgid, price) {
 if (protons.gte(new Decimal(price)) && PU[upgid].mbuytimes !== protonupgrades[upgid][0] ) {
 protons = protons.minus(price)
@@ -515,29 +500,7 @@ function buyqu(upgid) {
   }
 
 function autobuy(MaxBuyTimes) {
-
-  if (MaxBuyTimes == null) {
-    MaxBuyTimes = 1
-  }
-
-
-      if (autobuyers[0] == 1) {
-        buymax(0,MaxBuyTimes)
-  }
-
-  if (autobuyers[1] == 1) {
-  buymax(1,MaxBuyTimes)
-  }
-
-  if (Qupgrades[5][0] == 1) {
-    buymax(2, MaxBuyTimes)
-  }
-
-
-
-
-
-
+// TBD
 }
 
 function buymax(buy, mbt) {
@@ -546,23 +509,14 @@ function buymax(buy, mbt) {
   }
   const MaxBuyTimes = mbt;
   if (buy == 0 && CGupgrade.canBuy) {
-    let i = 1;
-    while (i <= MaxBuyTimes) {
-      CGupgrade.purchase();
-      updateHTML(["cg/pd"]);
-      if (!CGupgrade.canBuy) break
-      i++;
+      CGupgrade.purchase(true);
+      updateHTML();
     }
-  }
 
-  if (buy == 1 && !CGupgrade.canBuy) {
-    let i = 1;
-    while (i <= MaxBuyTimes) {
-      PDupgrade.purchase();
-      updateHTML(["cg/pd"]);
-      if (!PDupgrade.canBuy) break
-      i++;
-    }
+  if (buy == 1 && PDupgrade.canBuy) {
+      PDupgrade.purchase(true);
+      updateHTML();
+
   }
 
   if (buy == 2) {
@@ -747,6 +701,10 @@ function geteffecttoname(type,effect, level, rle) {
 
 }
 
+function switchMultiplierTab(id) {
+  player.chosenMultiplier = id
+}
+
 // Initial display
 updateInstancesDisplay();
 
@@ -786,8 +744,6 @@ function generateUniqueRandomNumbers(min, max, count) {
 
   return result;
 }
-
-setTimeout(loadlssave, 5);
 updateInstancesDisplay();
 
 function resetsave() {
@@ -826,8 +782,18 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-setInterval(function() {
-  tick(1)
-}, 10)
-setInterval(UpdatePU, 1000)
-updateHTML(["cg/pd"])
+if (!dev.disableStartInterval) setInterval(function() {tick(1)}, 10)
+setTimeout(loadlssave, 1);
+updateHTML()
+
+document.addEventListener('DOMContentLoaded', () => {
+    const divs = document.querySelectorAll('div[id^="buyable_"]');
+    divs.forEach(div => {
+        const rebuyableName = div.id.replace("buyable_", "");
+        const rebuyable = SetRebuyable.getInstanceBySet(rebuyableName);
+        if (rebuyable) {
+            const button = RemakeRebuyableButton(rebuyable);
+            div.appendChild(button);
+        }
+    });
+});

@@ -65,6 +65,7 @@
         <li id="protonTab" class="tab" onclick="showTab('proton')">Proton</li>
         <li id="quarkTab" class="tab" onclick="showTab('quark')">Quark</li>
         <li id="options" class="tab" onclick="showTab('options')">Options</li>
+        <li id="mult" class="tab" onclick="showTab('mult')">Options</li>
       </ul>
     </div>
 
@@ -73,9 +74,9 @@
         <h1>Carbon</h1>
         <p>You are gaining: <span id="pdr">0</span> Carbon per second</p>
         <p>Carbon: <span id="ca">0</span></p>
-        <div class="cgbuy"></div>
+        <button id="cgbuy"></button>
         <p>Carbon Generators: <span id="cgs">0</span></p>
-        <div class="pdbuy"></div>
+        <button id="pdbuy"></button>
         <p>Current Production Speed: <span id="cps">0</span></p>
       </div>
     </div>
@@ -88,9 +89,9 @@
           Reset to increase boost amount
         </button>
         <p>Boost gain is based on the amount of carbon you have produced</p>
-        <p>Boost provides a multiplier to Carbon Generation (Boost ^ 2.5). Currently x<span id="boostMult">0</span></p>
-        <div id="boostm">
-
+        <p>Boost provides a multiplier to Carbon Generation. Currently x<span id="boostMult">0</span></p>
+        <button id="bubuy"></button>
+        <p>Increase the strength of Carbon generator bonding (Increased Carbon generation based on Carbon Generators). <br> x<span id="boostmMult">0</span> stronger</p>
         </div>
       </div>
 
@@ -102,12 +103,26 @@
         <button id="crush" onclick="pcrush()">
           Crush Carbon for Protons (Reqiures more than +1 protons gained on crush)
         </button>
-        <p>You can crush your Carbon into protons, but this will divide your production by a massive amount for a certain amount of time. You can only crush if you have reached the 1e5 boost milestone. (p = Protons)</p>
+        <p>You can crush your Carbon into protons, but this will divide your production by a massive amount for a certain amount of time. <br> You can only crush if you have reached the 1e5 boost milestone. (p = Protons)</p>
+        <span id="timepr"></span>
+        <p>You can hover over Upgrades to see Specific Effects</p>
         <p>Your proton cap is <span id="pl">0</span></p>
         <p>you unlock Quarks at 1e10 Protons</p>
-        <div id="protonm">
-
-          <div>
+        <div class="protonUpgradeContainer">
+          <button id="p1buy"></button>
+          <button id="p2buy"></button>
+          <button id="p3buy"></button>
+          <button id="p4buy"></button>
+          <button id="p5buy"></button>
+          <button id="p6buy"></button>
+          <button id="p7buy"></button>
+          <button id="p8buy"></button>
+          <button id="p9buy"></button>
+          <button id="p10buy"></button>
+          <button id="p11buy"></button>
+          <button id="p12buy"></button>
+        </div>
+        <p>You have <span id="nanobot">0</span> Nano Bots <br> Which are providing a x<span id="nanobotmul">0</span> multiplier to carbon Generation</p>
       </div>
     </div>
   </div>
@@ -165,6 +180,10 @@
       </div>
     </div>
 
+    <div class="tab-content" id="mult-content">
+      <div class="effect-container" id="carbonGendiv">
+    </div>
+
     <div class="tab-content" id="ab-content">
       <div class="ab">
         <h1>Autobuyers</h1>
@@ -190,6 +209,7 @@
     <script src="notifications.js"></script>
     <script src="modal.js"></script>
     <script src="save.js"></script>
+    <script src="proton.js"></script>
     <script src="boost.js"></script>
     <script src="main.js"></script>
     <script>

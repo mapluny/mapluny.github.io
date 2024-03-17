@@ -5,3 +5,7 @@ function isFunction(v) {
   function isDecimal(v) {
     return v instanceof Decimal;
   }
+
+let dev = {
+  disableStartInterval: false
+}

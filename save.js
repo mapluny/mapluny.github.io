@@ -6,10 +6,7 @@ let save = {
   progression: 0,
   time: Date.now(),
   TimeSinceQuarkReset: 0,
-  buyableSets: {
-    cg: new Decimal(0),
-    pd: new Decimal(0)
-},
+  buyableSets: {},
 
   // Carbon Generators
   carbonGenerators: {
@@ -86,6 +83,13 @@ let save = {
   
 };
 function loadSave(savedData) {
+  for (const key in savedData) {
+    if (player[key]) {
+      let val = saveData[key];
+      if (isDecimal(player[key])) player[key] = new Decimal(savedData[key])
+      else player[key] = savedData[key];
+    }
+  }
     carbon = new Decimal(savedData.carbon);
     highestcarbonthisreset = new Decimal(savedData.highestcarbonthisreset);
     productionreduction = new Decimal(savedData.productionreduction);
@@ -129,14 +133,21 @@ function loadSave(savedData) {
     ProductionDelay = new Decimal(savedData.antistuff.ProductionDelay);
     Diminish = new Decimal(savedData.antistuff.Diminish);
     AntiProtons = new Decimal(savedData.antistuff.AntiProtons);
-    buyableSets = {
-      cg: new Decimal(savedData.buyableSets.cg),
-      pd: new Decimal(savedData.buyableSets.pd)
-    }
-    updateHTML(["cg/pd"])
+    for (const key in savedData.buyableSets) {
+      if (buyableSets[key]) {
+          buyableSets[key] = new Decimal(savedData.buyableSets[key]);
+      } else {
+          buyableSets[key] = new Decimal(0);
+      }
+  }
+    updateHTML()
   }
   
   function saveData() {
+    const buyableSetsData = {};
+    for (const key in buyableSets) {
+        buyableSetsData[key] = buyableSets[key].toString();
+    }
     const savedData = {
         carbon: carbon.toString(),
         highestcarbonthisreset: highestcarbonthisreset.toString(),
@@ -145,10 +156,7 @@ function loadSave(savedData) {
         progression: progression,
         time: Date.now(),
         TimeSinceQuarkReset: TimeSinceQuarkReset,
-        buyableSets: {
-          cg: buyableSets.cg.toString(),
-          pd: buyableSets.pd.toString()
-        },
+        buyableSets: buyableSetsData,
 
         carbonGenerators: {
             cg: cg.toString(),
@@ -201,6 +209,12 @@ function loadSave(savedData) {
         },
     };
 
+    for (const key in player) {
+      let val = player[key];
+      if (isDecimal(val)) savedData[key] = player[key].toString();
+      else savedData[key] = player[key]
+    }
+
     return savedData;
 }
 
@@ -222,10 +236,7 @@ function resetsaves() {
     totalcarbonthisreset = new Decimal(0);
     time = Date.now();
     TimeSinceQuarkReset = 0;
-    buyableSets = {
-      cg: new Decimal(0),
-      pd: new Decimal(0)
-  }
+    buyableSets = {}
     
 
     // Reset Carbon Generators
