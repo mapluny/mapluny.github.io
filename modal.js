@@ -55,5 +55,3 @@ const modalLibrary = (function () {
       showModal: showModal
     };
   })();
-  
-  // Usage example in another script

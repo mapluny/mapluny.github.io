@@ -89,7 +89,11 @@ body {
   border-color: #472606;
 }
 
-/* Other styles */
+#help-content {
+  background-color: #8789eb;
+  border-color: #6a74ad;
+}
+
 .container {
   text-align: center;
 }
@@ -145,9 +149,6 @@ button:disabled:hover {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* modalLibrary.css */
-
-/* Style for the modal container */
 .modal-container {
   position: fixed;
   top: 0;
@@ -160,7 +161,6 @@ button:disabled:hover {
   z-index: 9999;
 }
 
-/* Style for the modal overlay */
 .overlay {
   position: fixed;
   top: 0;
@@ -171,7 +171,6 @@ button:disabled:hover {
   z-index: -1;
 }
 
-/* Style for the modal content */
 .modal-content {
   background-color: white;
   padding: 20px;
@@ -180,7 +179,6 @@ button:disabled:hover {
   position: relative;
 }
 
-/* Style for the close button */
 .close-button {
   position: absolute;
   top: 10px;

@@ -53,6 +53,10 @@
   </head>
 
   <body>
+    <br>
+    <div class="text">
+      You have <span id="ca">0</span> Carbon.
+    </div>
     <p class="text">Percent to next goal</p>
       <div class="progress-container">
         <div class="progress-bar" id="myBar"></div>
@@ -65,7 +69,8 @@
         <li id="protonTab" class="tab" onclick="showTab('proton')">Proton</li>
         <li id="quarkTab" class="tab" onclick="showTab('quark')">Quark</li>
         <li id="options" class="tab" onclick="showTab('options')">Options</li>
-        <li id="mult" class="tab" onclick="showTab('mult')">Options</li>
+        <li id="help" class="tab" onclick="showTab('help')">Help</li>
+        <li id="mult" class="tab" onclick="showTab('mult')">Multipliers</li>
       </ul>
     </div>
 
@@ -73,7 +78,8 @@
       <div class="container">
         <h1>Carbon</h1>
         <p>You are gaining: <span id="pdr">0</span> Carbon per second</p>
-        <p>Carbon: <span id="ca">0</span></p>
+        <p>Carbon: <span id="ca2">0</span></p>
+        <p>Hold M to max all</p>
         <button id="cgbuy"></button>
         <p>Carbon Generators: <span id="cgs">0</span></p>
         <button id="pdbuy"></button>
@@ -88,8 +94,11 @@
         <button id="reset1" onclick="reset1()">
           Reset to increase boost amount
         </button>
-        <p>Boost gain is based on the amount of carbon you have produced</p>
+        <p>Boost gain is based on the amount of carbon you have produced (soft cap at 1e2000 gained)</p>
         <p>Boost provides a multiplier to Carbon Generation. Currently x<span id="boostMult">0</span></p>
+        <p>Reach 1e5 boost to unlock Autobuyers</p>
+        <button onclick="Boostupgrade.purchase(true)">Max Upgrade</button>
+        <br>
         <button id="bubuy"></button>
         <p>Increase the strength of Carbon generator bonding (Increased Carbon generation based on Carbon Generators). <br> x<span id="boostmMult">0</span> stronger</p>
         </div>
@@ -103,11 +112,10 @@
         <button id="crush" onclick="pcrush()">
           Crush Carbon for Protons (Reqiures more than +1 protons gained on crush)
         </button>
-        <p>You can crush your Carbon into protons, but this will divide your production by a massive amount for a certain amount of time. <br> You can only crush if you have reached the 1e5 boost milestone. (p = Protons)</p>
+        <p>You can crush your Carbon into protons, but this will divide your production by a massive amount for a certain amount of time.</p>
         <span id="timepr"></span>
         <p>You can hover over Upgrades to see Specific Effects</p>
         <p>Your proton cap is <span id="pl">0</span></p>
-        <p>you unlock Quarks at 1e10 Protons</p>
         <div class="protonUpgradeContainer">
           <button id="p1buy"></button>
           <button id="p2buy"></button>
@@ -121,7 +129,11 @@
           <button id="p10buy"></button>
           <button id="p11buy"></button>
           <button id="p12buy"></button>
+          <button id="p13buy"></button>
+          <button id="p14buy"></button>
+          <button id="p15buy"></button>
         </div>
+        <button id="prtbuy"></button> <button id="prt2buy"></button>
         <p>You have <span id="nanobot">0</span> Nano Bots <br> Which are providing a x<span id="nanobotmul">0</span> multiplier to carbon Generation</p>
       </div>
     </div>
@@ -134,35 +146,15 @@
         <p>Quarks can be disabled and enabled, Quarks give a random buff. You can only have 4 Quarks enabled at once.</p>
         <p>You can only disable Quarks if you Quark reset, and you can only delete Quarks that are disabled.</p>
         <p>Quark levels are based on Boost, and Protons.</p>
-        <p>Exotic Matter (EM) is based on Carbon and Production Speed.</p>
+        <p>Exotic Matter (EM) is based on Carbon.</p>
         <button id="reset2" onclick="reset2()">
-          Reset Everything before this point to gain a random Quark (Requires 1e15 Boost, and 1e10 Protons)
+          Reset Everything before this point to gain a random Quark (Requires e70 Protons)
         </button>
         <p>Reseting now would give you a level <span id="qlevel">0</span> quark, and <span id="emdr">0</span> Exotic Matter</p>
         <p>You have: <span id="emd">0</span> Exotic Matter</p>
         <button id="reset2" onclick="togquarks()">
           Disable all Quarks on reset? <span id="dqr">0</span>
         </button>
-        <div class="button-container">
-          <button class="corner-button" id="QUpg0" onclick="buyqu(0)">
-            You start with 1e10 Carbon Cost: 8EM
-            </button>
-          <button class="corner-button" id="QUpg1" onclick="buyqu(1)">
-          You start with 1e5 Boost Cost: 8EM
-          </button>
-          <button class="corner-button" id="QUpg2" onclick="buyqu(2)">
-            You start with 3 Protons Cost: 8EM
-            </button>
-            <button class="corner-button" id="QUpg3" onclick="buyqu(3)">
-              CGs, Production Speed, and Boost are stronger based on EM Cost: 64EM
-            </button>
-            <button class="corner-button" id="QUpg4" onclick="buyqu(4)">
-              You start resets with all Protons upgrades bought. Cost: 64EM
-            </button>
-            <button class="corner-button" id="QUpg5" onclick="buyqu(5)">
-              Unlock autobuyers for the Proton multiplier upgrade. Cost: 64EM
-            </button>
-        </div>
 
         <div id="instances"></div>
         
@@ -172,7 +164,7 @@
 
     <div class="tab-content" id="options-content">
       <div class="op">
-        <h1>Carbon GAME</h1>
+        <h1>Carbon Game</h1>
         <p>The game automatically saves every 10 seconds.</p>
         <button id="fullr" onclick="resetsave()">
           Reset your save.
@@ -181,34 +173,50 @@
     </div>
 
     <div class="tab-content" id="mult-content">
-      <div class="effect-container" id="carbonGendiv">
+      <button style="position: relative; top: 0; left: 50%; transform: translate(-50%, 0);" onclick="goNextMult()">→</button>
+      <div class="effect-container" id="effectsDiv">
+      </div>
+  </div>
+
+      <div class="tab-content" id="help-content">
+      <div class="op">
+        <h1>Information on the game</h1>
+        <p>Has Spoilers!!!</p>
+        <button onclick="helpModal(`Carbon is the main Resource, you start with 10 and you can use it to purchase Carbon Generators, Carbon Generators generate Carbon, Carbon Generators have a base price of 10 Carbon, and cost multiplier of x1.15. ` +
+        `Production Speed can be purchased with Carbon as well, Production Speed multiplies your Carbon Generation by 1.5x per upgrade, Production Speed cost starts at a base of 100, and cost multiplier of 10x`)">Carbon, Carbon Generators, and Production Speed.</button>
+        <button onclick="helpModal(`Boost is a reset layer. you gain more Boost based on the amount of Carbon you produced. after gaining 1000 Carbon you can reset to gain Boost, Boost multiplies Carbon Generation by log3(boost)^2+1. ` +
+        `You can purchase an upgrade using Boost, to improve the effect of Carbon Generator Bonding, Carbon Generator Bonding increases the strength of Carbon Generators based on the amount of Carbon Generators you have, ` +
+        `the upgrade price increases super exponentially after 3 upgrades, the first 3 prices are set. after 3 purchases, base price of 1000 Boost, and a cost multiplier of 4.5x, however the cost multiplier multiplies itself by 4.5x per upgrade as well, all super exponentially increasing prices have exponentially increasing cost multipliers.`)">Boost, Carbon Generator Bonding, Super Exponentially increasing prices.</button>
+        <button onclick="helpModal(`Autobuyers are unlocked for Carbon Generators and Production Speed upgrades after reaching 1e5 Boost, you will unlock Autobuyers for the Boost Upgrade later on. ` +
+        `Protons are another Resource unlocked after reaching 1e5, they can be gained by crushing your Carbon, this will reset your Carbon to 10 and reduce Carbon production by an amount based on the amount of Protons you gain but the reduction will eventually go away, the main use of this Resource is to buy Proton Upgrades. ` + 
+        `Proton Upgrades can be purchased using Protons, they can only be bought once but usually provide a very strong effect, either improving a formula, increasing the strength of another Resource, or unlocking new Mechanics.` + 
+        `Nano Bots are another Resource unlocked by a Proton Upgrade, They are produced a base rate of 1 per second, but this can be increased by Proton Upgrades. Nano Bots provide a multiplier to Carbon Generation (nanobots^2). There are also 2 Nano Bot upgrades which can be purchased using Protons ` + 
+        `The first upgrade increased Nano Bot generation by 750x per upgrade, and has a super exponentially increasing price (5e6 base, x5e5 per upgrade), the second increases the Nano Bot multiplier exponent (nanobots^(2+purchases)) and has a super exponentially increasing price (1e30 base, x1e70 per upgrade), however this upgrade can only be purchased 5 times.`)">Autobuyers, Protons, Proton Upgrades, NanoBots.</button>
+      </div>
     </div>
+  
 
     <div class="tab-content" id="ab-content">
-      <div class="ab">
-        <h1>Autobuyers</h1>
-        <p>Autobuyers can only be toggled if you have unlocked them.</p>
-        <button id="tcg" onclick="toggleab(0)">
-          Toggle CG autobuyer. <span id="tcgs">0</span>
-        </button>
-        <button id="tps" onclick="toggleab(1)">
-          Toggle Production Speed autobuyer. <span id="tpss">0</span>
-        </button>
-      </div>
+      <h1> Autobuyers </h1>
+      <button id="cgautobuy"></button> <button id="pdautobuy"></button> <br>
+      <button id="buautobuy"></button>
     </div>
     
     <script src="break_eternity.min.js"></script>
+    <script src="costScaling.js"></script>
     <script src="utils.js"></script>
     <script src="checkreq.js"></script>
     <script src="currency.js"></script>
     <script src="buyable.js"></script>
-    <script src="updatehtml.js"></script>
+    <script src="autobuyer.js"></script>
     <script src="effect.js"></script>
     <script src="registerupgdata.js"></script>
     <script src="Inventory.js"></script>
     <script src="notifications.js"></script>
+    <script src="updatehtml.js"></script>
     <script src="modal.js"></script>
     <script src="save.js"></script>
+    <script src="quarks.js"></script>
     <script src="proton.js"></script>
     <script src="boost.js"></script>
     <script src="main.js"></script>
@@ -226,6 +234,28 @@
 
         document.getElementById(tabId + '-content').style.display = 'block';
         document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+      }
+
+      function goNextMult() {
+        if (player.chosenMultiplier>=effectClass.maxEff-1) {
+        player.chosenMultiplier = 0
+        return
+        }
+        if (player.chosenMultiplier==effectClass.maxEff-1) {
+        player.chosenMultiplier = 0
+        }
+        else {
+          if (!effectClass.getEffectClassByID(player.chosenMultiplier + 1).isUnlocked) {
+            player.chosenMultiplier += 2
+            goNextMult()
+            return
+          }
+          player.chosenMultiplier++
+          }
+      }
+
+      function helpModal(text) {
+        modalLibrary.showModal(`<p> ${text} </p>`, [])
       }
 
       // Initialize the default tab

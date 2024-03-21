@@ -1,27 +1,35 @@
 function protonsGained(carbon) {
- return Decimal.round(carbon.div("5e7").pow(0.25));
+
+    let gain = Decimal.round(carbon.div("5e7").pow(0.25)).min(plimit)
+    if (protonData.getIsUpgradeBought(10)) gain = gain.mul(boostMult())
+    return gain;
 }
 
 function pcrush(gain) {
     if (gain === undefined) gain = protonsGained(Currencies.carbon.value)
-    if (gain.gte(1) && Currencies.boost.value.gte("1e5")){
+    if (gain.gte(1)){
         reductiongain = getPRforGain(gain)
         productionreduction = Decimal.max(productionreduction, reductiongain)
         Currencies.carbon.setValue(new Decimal(10));
-        Currencies.nanoBot.setValue(new Decimal(0));
+        Currencies.nanoBot.setValue(new Decimal(1));
         protons = protons.plus(gain);
         }
 }
 
 function getPRforGain(gain) {
     // Be nicer because the wait time is insanely increased for high numbers
-    if (gain.gte("1e6")) return Decimal.pow("1e150", gain.log(12)).max("1e1000")
-    return Decimal.pow10(gain.pow(0.5))
+    if (gain.gte("1e5")) return Decimal.pow("1e3", gain.log(12)).max('1.69e316')
+    return Decimal.pow10(gain.pow(0.5)).div(gain.pow(2)).max(1)
 }
 
 function getNextPR(diff, curr) {
     let divPerSecond = protonData.productionReduction.divPerSecond()
-    let loss = Decimal.pow(divPerSecond, diff / 100)
+
+    // idk what actually causes it but sometimes during offline progress while PR is being reduced everything is NaN so hopefully this fixes it.
+
+    if (diff == 0) return curr
+
+    let loss = Decimal.pow(divPerSecond, diff / 100).min(curr)
     return curr.div(loss)
 }
 
@@ -41,17 +49,20 @@ let protonData = {
         return this.getUpgrade(id).set.gte(1)
     },
     allUpgrades() {
-        let i = 1
-        let upgrades = []
-        while (SetRebuyable.instances.find(upg => upg.config.set==="p" + i) !== undefined) {
-            upgrades.push(SetRebuyable.instances[i])
-            i++
-        }
+        let upgrades = SetRebuyable.instances.filter(upg => upg.otherData.find(data => data=="PU"))
         return upgrades
+    },
+
+    resetUpgrades() {
+        for (upgKey in this.allUpgrades()) {
+            upgKey = JSON.parse(upgKey)+1
+            let upg = this.getUpgrade(upgKey);
+            upg.set = new Decimal(0);
+        }
     },
     productionReduction: {
         divPerSecond() {
-            return Decimal.times(1.5, Currencies.nanoBot.value.max(5).log(2).pow(2).times(10))
+            return Currencies.nanoBot.value.gt(1) ? Decimal.times(50, Currencies.nanoBot.value.max(5).pow(0.1)) : Decimal.times(1.5, Currencies.nanoBot.value.max(5).pow(0.1))
         }
     }
 }

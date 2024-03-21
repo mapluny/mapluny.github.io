@@ -82,9 +82,9 @@ Currencies = {
     }),
     boost: new DecimalResource({
         name: "Boost",
-        value: () => boost,
-        setValue: (x) => boost = x,
-        perSecond: () => new Decimal(0)
+        value: () => boost.max(1),
+        setValue: (x) => boost = x.max(1),
+        perSecond: () => protonData.getIsUpgradeBought(14) ? boostGained().mul(0.01) : new Decimal(0)
     }),
     protons: new DecimalResource({
         name: "Proton",

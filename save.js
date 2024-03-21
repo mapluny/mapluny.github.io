@@ -107,7 +107,6 @@ function loadSave(savedData) {
     pdcost = new Decimal(savedData.productionSpeed.pdcost);
     pdboughttimes = new Decimal(savedData.productionSpeed.pdboughttimes);
     pdcostpower = new Decimal(savedData.productionSpeed.pdcostpower);
-    autobuyers = [...savedData.productionSpeed.autobuyers];
   
     boost = new Decimal(savedData.boost.boost);
     boostgainedonreset = new Decimal(savedData.boost.boostgainedonreset);
@@ -140,6 +139,13 @@ function loadSave(savedData) {
           buyableSets[key] = new Decimal(0);
       }
   }
+  for (const key in savedData.autobuyers) {
+    if (autobuyers[key]) {
+      autobuyers[key] = savedData.autobuyers[key];
+    } else {
+      autobuyers[key] = false;
+    }
+}
     updateHTML()
   }
   
@@ -170,7 +176,6 @@ function loadSave(savedData) {
             pdcost: pdcost.toString(),
             pdboughttimes: pdboughttimes.toString(),
             pdcostpower: pdcostpower.toString(),
-            autobuyers: [...autobuyers]
         },
 
         boost: {
@@ -214,6 +219,9 @@ function loadSave(savedData) {
       if (isDecimal(val)) savedData[key] = player[key].toString();
       else savedData[key] = player[key]
     }
+    for (const key in autobuyers) {
+      savedData["autobuyers"][key] = autobuyers[key];
+  }
 
     return savedData;
 }
@@ -229,79 +237,8 @@ function loadlssave() {
     loadSave(csave)
 }
 function resetsaves() {
-    // Reset all variables and properties to their initial values
-    carbon = new Decimal(10);
-    highestcarbonthisreset = new Decimal(10);
-    productionreduction = new Decimal(1);
-    totalcarbonthisreset = new Decimal(0);
-    time = Date.now();
-    TimeSinceQuarkReset = 0;
-    buyableSets = {}
-    
-
-    // Reset Carbon Generators
-    cg = new Decimal(0);
-    cgcost = new Decimal(10);
-    cgboughttimes = new Decimal(0);
-    cgmult = new Decimal(1);
-
-    // Reset Production Speed
-    pd = new Decimal(1);
-    pdcost = new Decimal(100);
-    pdboughttimes = new Decimal(0);
-    pdcostpower = new Decimal(1);
-    autobuyers = [1, 1];
-
-    // Reset Boost Stuff
-    boost = new Decimal("1");
-    boostgainedonreset = new Decimal(0);
-
-    // Reset Proton Stuff
-    protons = new Decimal("0");
-    protongainedonreset = new Decimal(1);
-    protonupgrades = [
-        [0, "3"],
-        [0, "3"],
-        [0, "3"],
-        [0, "243"],
-        [0, "243"],
-        [0, "243"],
-        [0, "1e5"],
-        [0, "1e5"],
-        [0, "1e5"],
-    ];
-    plimit = new Decimal("1e10");
-
-    // Reset Quark Stuff
-    qresettimes = new Decimal("0");
-    canqreset = 0;
-    togqreset = false;
-    ExoticMatter = new Decimal("0");
-    MyObject.instances = [];
-    updateInstancesDisplay();
-    progression = 0;
-    HCQR = new Decimal(0);
-    HPDQR = new Decimal(0);
-    Qupgrades = [
-      [0,"8"],
-      [0,"8"],
-      [0,"8"],
-      [0,"64"],
-      [0,"64"],
-      [0,"64"],
-    ]
-    
-    // Reset Anti Stuff
-    CarbonDestroyers = new Decimal(0);
-    ProductionDelay = new Decimal(0);
-    Diminish = new Decimal(0);
-    AntiProtons = new Decimal(0);
-    // Save the reset state
-    setsave();
+    localStorage.clear()
+    location.reload();
 }
-
-// Call resetsave function when needed
-// For example, you can call it when a "Reset" button is clicked
-// resetButton.addEventListener("click", resetsave);
 
 setInterval(setsave, 30000);
